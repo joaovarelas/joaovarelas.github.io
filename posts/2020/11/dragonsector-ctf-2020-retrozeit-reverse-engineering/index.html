@@ -1,0 +1,377 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    
+    <head>
+        <title>DragonCTF 2020 - "RetroZeit" - Reverse Engineering</title>
+	    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+	    <link type="text/css" rel="stylesheet" href="../../../../css/RobotoCondensed.css" />
+	 	<link type="text/css" rel="stylesheet" href="../../../../css/style.css" media="screen" />
+        <link href="../../../../css/prism.css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../../../js/jquery-1.js"></script>
+        <meta name="thumbnail" content="images/1.png" />
+    </head>
+    
+    <body>
+	    <div id="mainwrap">
+	        <br/>
+	        <header>
+		        
+		        <!--
+		             Feel free to send feedback or suggestions
+		             through PGP contact form or email.
+		        -->
+
+	        </header>
+	        
+	        <div id="mainwrap">
+		        <div id="content-post">
+
+		            <div id="posts" class="section-post">	    
+			            <h2>DragonCTF 2020 - "RetroZeit" - Reverse Engineering</h2>
+			            <hr/>
+                        <p style="text-align: right">
+                            <i>22-11-2020</i>
+                        </p>
+
+                        
+                        <center><img src="images/1.png" /></center>
+
+                        <p><h3>Introduction</h3></p>
+			            <p>
+			                This challenge was part of DragonCTF 2020 organized by
+                            <a href="https://dragonsector.pl/">Dragon Sector</a>, a capture-the-flag team from Poland.
+                            
+                            As the description suggests, we are given an executable that works on AmigaOS 3.x
+                            Workbench which is an operating system released in 1993. It was the operating system shipped
+                            with the Commodore Amiga 4000 (A4000) desktop computer whose CPU is supported by 68k
+                            (Motorola 68000) architecture.
+                            <br>
+                            <center><pre><code class="language-bash">$ file retrozeit
+retrozeit: AmigaOS loadseg()ble executable/binary</code></pre></center>
+                        </p>
+                        <p>
+                            The challenge was solved by me and my teammate
+                            <a href="https://mrsuicideparrot.github.io/">@AndreCirne</a> from <a href="https://xstf.pt/">xSTF</a>.
+                            
+			            </p>
+
+                        <p><h3>Setup the emulator</h3></p>
+                        <p>
+                            Disclaimer: Emulation wasn't required at all. In fact, the flag could be obtained just
+                            by examining and reversing the binary file.
+                            <br>
+                            However, we wanted to play a bit with the emulator and try to execute the binary.
+                        </p>
+                        <p>
+                            The emulator used was <a href="https://fs-uae.net/">FS-UAE Amiga Emulator</a> and works
+                            on Linux. It has a lot of configurations that enable users to tweak and customize Amiga.
+                            There's also an entire scene around retro games forums that offer a lot of resources and
+                            games to setup the emulator devices.
+                        </p>
+                        <p>
+                            We found AmigaOS 3.1 Workbench in some old historical archive (and also a Kickstart ROM). These
+                            files were required to setup FS-UAE.
+                            <br>
+                            When launching the emulator, we are presented with this cool window:
+                        </p>
+                        <center><img src="images/2.png" width="500" heigth="500" /></center>
+                        <br/>
+                        <p>
+                            Now we had to figure out how to place the binary in our emulated desktop in order to execute it.
+                            <br>
+                            The first thing we tried was to create a new hard drive with the <code-line>retrozeit</code-line>
+                            file but we couldn't format it due to some errors.
+                        </p>
+                        <p>
+                            After having a look at the file structure of floppy disk files (in particular, ADF files) we
+                            decided to create a floppy containing the executable.
+                            <br>
+                            Since we didn't want to start a project from root, we downloaded an open-source
+                            "Hello World" version from <a href="https://github.com/nicodex/HelloAmi">this</a> GitHub
+                            repository (HelloAmi).
+                        </p>
+                        <p>
+                            We managed to hack the <i>Amiga Disk File</i> and replace the executable binary with our
+                            own, <code-line>retrozeit</code-line> in this case, by changing a few lines of code both in
+                            <code-line>.asm</code-line> files from HelloAmi project and the <code-line>.py</code-line>
+                            script itself. The Python
+                            script is a wrapper for <a href="http://sun.hasenbraten.de/vasm/">vasm M68k assembler</a>.
+                        </p>
+                        <p>
+                            After loading the floopy in emulator and executing it, we could wait <i>ad aeternum</i> for
+                            the flag to be calculated.
+                            <br/>
+                            Our goal is to understand how the calculation is performed so we can get the flag quickly.
+                        </p>
+                        <center><img src="images/3.png" width="550" height="150" /></center>
+
+                        <p><h3>Reverse engineering</h3></p>
+                        <p>
+                            We started by disassembling the binary in IDA. Ghidra seems to have a decompiler for this
+                            arch but it looked messy and couldn't make sense of the resulting code.
+                            <br/>
+                            The principal functions (or subroutines) are the following:
+                            
+                            <ol>
+                                <li><code-line>main</code-line></li>
+                                <li><code-line>start_timer</code-line></li>
+                                <li><code-line>check_flag</code-line></li>
+                                <li><code-line>retry_flag</code-line></li>
+                                <li><code-line>decrypt_flag</code-line></li>
+                                <li><code-line>set_text</code-line></li> 
+                            </ol>
+                        </p>
+                        <p>
+                            We immediately thought that the flag characters would be printed one at time with possibly
+                            exponential pauses between them.
+                            <br>
+                            This turned out to be false. No character was ever printed because the program was looping
+                            in <code-line>retry_flag</code-line> while <code-line>check_flag</code-line> wasn't satisfied.
+                        </p>
+                        <p>
+                            Once the button is pressed, it triggers the <code-line>check_flag</code-line> to verify the current
+                            flag in memory.
+                            If successful, the flag is then decrypted in subroutine <code-line>decrypt_flag</code-line>
+                            and printed to the user via <code-line>set_text</code-line>.
+                        </p>
+                        
+                        <center><img src="images/4.png" width="700" height="400" /></center>
+                        <br/>
+                        
+                        <p>
+                            Note that <code-line>tst.b d0</code-line> instruction will compare the <code-line>d0</code-line>
+                            data register with zero. If the <code-line>check_flag</code-line> call returns
+                            <code-line>false</code-line>, then <code-line>d0</code-line> will be 0 and will branch to
+                            the green line, <code-line>loc_954</code-line> (aka "calculating the flag"), otherwise it
+                            will perform <code-line>decrypt_flag</code-line>.
+                        </p>
+
+                        <p>
+                            We tried to <i>one-shot</i> the challenge by patching the binary and transform
+                            <code-line>beq.s loc_954</code-line> into <code-line>bne.s loc_954</code-line> to invert the
+                            condition.
+                            <br/>
+                            This modification would lead to <code-line>decrypt_flag</code-line>
+                            without performing any calculation (i.e., it would branch to the red line instead of the green one).
+                        </p>
+                        <p>
+                            When executing the patched binary on our Amiga machine, it revealed an interesting string which
+                            we assumed to be the encoded flag: <code-line>tzggaK/WdDtxwYllaWJ5CNuibFCPdxZrIsQokWN</code-line>.
+                        </p>
+                        <center><img src="images/5.png" width="500" height="150" /></center>
+                        <br/>
+
+                        <p>
+                            At this time, we knew it will need a little more effort. We started digging the assembly and
+                            translating to (kind of) pseudocode.
+                            <br/>
+                            We found that subroutines were working over two byte arrays:
+                            <ol>
+                                <li>enc_chr: <code-line>8B 84 9A 9B 9A B1 D6 AF 93 B2 81 8C 84 AB 9D 9C 8E B9 B0 D9 A8 A4 9C 81 85 A0 A6 B4 87 9A BB 92 96 AD 8C D7 B0 8D 97</code-line></li>
+                                <li>enc_idx: <code-line>16 0C 24 17 13 19 07 09 0E 23 05 01 18 21 0D 10 12 1F 1A 1E 22 00 0F 0B 08 15 11 02 1D 1C 26 03 04 25 14 20 06 1B 0A</code-line></li>
+                            </ol>
+                        </p>
+
+                        <p>
+                            In particular, <code-line>decrypt_flag</code-line> job was to iterate
+                            <code-line>enc_chr</code-line> array and perform  bitwise operation
+                            <code-line>~(b ^ i)</code-line> for every byte in
+                            in the array at index <code-line>i</code-line>.
+                            <br/>
+                            For example:
+                            <ol>
+                                <li><code-line>0x8B</code-line>: <code-line>~(0x8B ^ 0) = 0x74 = 't'</code-line></li>
+                                <li><code-line>0x84</code-line>: <code-line>~(0x84 ^ 1) = 0x7A = 'z'</code-line></li>
+                                <li><code-line>(...)</code-line></li>
+                                <li><code-line>0x97</code-line>: <code-line>~(0x97 ^ 38) = 0x4E = 'N'</code-line></li>
+                            </ol>
+                            
+                        </p>
+                        <p>
+                            We still need to understand what kind of calculation is being done before we can actually
+                            decode the flag.
+                        </p>
+                        <p>
+                            On the other side, <code-line>check_flag</code-line> verify that elements on
+                            <code-line>enc_idx</code-line> are ordered according to 2 constraints:
+                            <ol>
+                                <li>Elements on even indices must be even and in decreasing order</li>
+                                <li>Elements on odd indices but be odd and in increasing order</li>
+                            </ol>
+                        </p>
+                        <p>
+                            We just noticed a bit later that <code-line>enc_idx</code-line> was a unique sequence
+                            from <code-line>0x00</code-line> to <code-line>0x26</code-line>. These were, of course,
+                            indices of the flag letters.
+                        </p>
+                        <p>
+                            To satisfy the constraints, we must re-arrange the elements in <code-line>enc_idx</code-line>
+                            such that:
+
+                            <ol>
+                                <li>Even elements in even indices (decreasing):
+                                    <code-line>0x26 _ 0x24 _ 0x22 _ ... _ 0x00</code-line></li>
+                                <li>Odd elements in odd indices (increasing):
+                                    &nbsp;&nbsp;<code-line>_ 0x01 _ 0x03 _ 0x05 _ ... _ 0x25</code-line></li>
+                            </ol>
+
+                        </p>
+                        <p>
+                            After re-arranging the array it should look like this:
+                            <ol>
+                                <li>enc_idx: <code-line>26 01 24 03 22 05 20 07 1E 09 1C 0B 1A 0D 18 0F 16 11 14 13 12 15 10 17 0E 19 0C 1B 0A 1D 08 1F 06 21 04 23 02 25 00</code-line></li> 
+                            </ol>
+                        </p>
+                        
+                        <br/>
+                        <p>
+                            Things became a little more obvious when we decided to analyze the behavior
+                            of <code-line>retry_flag</code-line> subroutine. In fact, all it did was
+                            a low effort swapping elements on random indices
+                            (hence the use of <code-line>start_timer</code-line>) and then check if
+                            the elements are ordered according to the restrictions mentioned above.
+                        </p>
+                        <p>
+                            Of course, it would take a reeeally long time to eventually match the correct order
+                            of the 39 elements while randomizing it. Maybe even more than the average
+                            lifespan, so we wanted to find a solution.
+                        </p>
+
+
+                        <p><h3>The solution</h3></p>
+                        <p>
+                            At this point we knew it was a permutation and had to find the correct order
+                            of bytes of the <code-line>enc_chr</code-line> array.
+                            <br/>
+
+                            We started by trying to map the elements of <code-line>enc_chr</code-line>:
+                            <ol>
+                                <li>Index 0 -> element at <code-line>enc_chr[enc_idx[0]]</code-line></li>
+                                <li>Index 1 -> element at <code-line>enc_chr[enc_idx[1]]</code-line></li>
+                                <li>and so on...</li>
+                            </ol>
+                        </p>
+                        <p>
+                            However it did not work. After decrypting the permutation it would still
+                            result in garbage flag.
+                        </p>
+                        <p>
+                            Then we tried the inverse:
+                            <ol>
+                                <li>Index <code-line>enc_idx[0]</code-line> -> element at <code-line>enc_chr[0]</code-line></li>
+                                <li>Index <code-line>enc_idx[1]</code-line> -> element at <code-line>enc_chr[1]</code-line></li>
+                                <li>and so on...</li>
+                            </ol>
+                        </p>
+                        <p>
+                            Still without success. There were not many more ideas left to test so we tried
+                            to "bruteforce" the prefix of the flag by hand (we knew the flag starts with
+                            <code-line>DrgnS{</code-line> and ends with <code-line>}</code-line>).
+                        </p>
+                        <p>
+                            In order to the first decoded character be <code-line>D</code-line>, the encoded
+                            <code-line>enc_chr</code-line> must start with <code-line>0xBB</code-line>.
+                            <br/>
+                            Remember the operation of decoding the flag:
+                            <center><code-line>~(0xBB ^ 0) = 0x44 = 'D'</code-line></center>
+                        </p>
+                        <p>
+                            The byte <code-line>0xBB</code-line> is at position 30 in <code-line>enc_chr</code-line>.
+                            We need to make a relation with <code-line>chr_idx</code-line> to get the correct index
+                            for each byte in the array.
+                        </p>
+                        <p>
+                            The number 30 was actually the distance/displacement between the index
+                            of first byte in ordered <code-line>enc_idx</code-line> and the actual position of that
+                            byte in unordered <code-line>enc_idx</code-line>.
+                        </p>
+
+
+                        <p>
+                            We got the flag on the emulator by patching the bytes on
+                            data section with the correct re-arranged array :)
+                            
+                        </p>
+                        <center><img src="images/6.png" width="500" height="150" /></center>
+
+                        <br/>
+                        
+                        <p>
+                            The following Python script will also calculate the permutation and print the flag:
+                            <center><pre><code class="language-python">#!/usr/bin/env python
+enc_chr = ['8B', '84', '9A', ..., '97']
+enc_idx = ['16', '0C', '24', ..., '0A']
+ordered_idx = ['26', '01', '24', ..., '00']
+
+# Calc the permutation
+sigma = list()
+
+for b in ordered_idx:
+    pos = enc_idx.index(b)
+    sigma.append(enc_chr[pos])
+
+#prefix = "BB8C9A92A881" # "DrgnS{"
+print("Permutation: {}".format("".join(s for s in sigma)))
+
+# Decrypt the flag
+n = len(sigma)
+i = 0
+
+flag = ""
+while i < n:
+    b = int(sigma[i], 16)
+
+    b = b ^ i # xor
+    b = b ^ 0b11111111 # not
+
+    flag += chr(b)
+
+    i += 1
+
+print("Flag: {}".format(flag))
+                            </code></pre></center>
+                        </p>
+
+
+                        <p><h3>References</h3></p>
+                        <ol>
+                            <li><a href="https://ctf.dragonsector.pl/">https://ctf.dragonsector.pl</a></li>
+                            <li><a href="https://en.wikipedia.org/wiki/Workbench_(AmigaOS)">https://en.wikipedia.org/wiki/Workbench_(AmigaOS)</a></li>
+                            <li><a href="http://68k.hax.com/">http://68k.hax.com</a></li>
+                            <li><a href="https://fs-uae.net/">https://fs-uae.net</a></li>
+                            <li><a href="https://github.com/nicodex/HelloAmi">https://github.com/nicodex/HelloAmi</a></li>
+                            
+                        </ol>
+                        
+			            <p style="margin-top: 5%;"><center><a href="/">← Go Back</a></center></p>
+			            
+		            </div>
+		            
+		        </div>
+		        
+	        </div>
+
+	        <div id="footer">
+		        · Original design by <a href="https://andreasviklund.com/" target="_blank">Andreas Viklund</a> ·
+	        </div>
+	        
+	        
+	    </div>
+
+        <!-- Syntax Highlighting -->
+        <script src="../../../../js/prism.js"></script>
+        
+	    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-156800674-1"></script>
+	    <script>
+	     window.dataLayer = window.dataLayer || [];
+	     function gtag(){dataLayer.push(arguments);}
+	     gtag('js', new Date());
+
+	     gtag('config', 'UA-156800674-1');
+	    </script>
+
+    </body>
+
+</html>
+
+

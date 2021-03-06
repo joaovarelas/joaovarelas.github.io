@@ -1,0 +1,276 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    
+    <head>
+	    <title>vrls.ws</title>
+	    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+	    <link type="text/css" rel="stylesheet" href="css/RobotoCondensed.css"/>
+	    <link type="text/css" rel="stylesheet" href="css/style.css" media="screen"/>
+	    <script type="text/javascript" src="js/jquery-1.js"></script>
+	    <script type="text/javascript" src="js/rsa.js"></script>
+	    <script type="text/javascript" src="js/aes-enc.js"></script>
+	    <script type="text/javascript" src="js/base64.js"></script>
+	    <script type="text/javascript" src="js/mouse.js"></script>
+	    <script type="text/javascript" src="js/sha1.js"></script>
+	    <script type="text/javascript" src="js/pgencode.js"></script>
+	    <script type="text/javascript" src="js/encryptmessage.js"></script>
+    </head>
+    
+    <body>
+	    <div id="mainwrap">	
+	        <header>
+                
+		        <!--.
+		             Feel free to send feedback or suggestions
+		             through PGP contact form or email.
+		        -->
+                
+		        <ul id="menu">
+		            <li class="active"><a class="posts" href="#posts" title="Posts">Posts</a><span>Blog</span></li>
+		            <li class=""><a class="profile" href="#profile" title="Profile">About me</a><span>Profile</span></li>
+		            <li class=""><a class="contact" href="#contact" title="Contact">Contact</a><span>Say something</span></li>
+		        </ul>
+	        </header>
+	        
+	        <div id="content">
+		        <div id="posts" class="section">	    
+		            <h2>Recent Posts</h2>
+		            <hr/>
+                    
+                    <div id="page1">
+		                <ol>
+                            <li><a href="posts/2021/02/bmw-shop-session-takeover-xss-bug-bounty-hackerone/">
+                                Bug Bounty - Session Takeover in BMW Shops via XSS - HackerOne</a> » 28 Fev 2021</li>
+                            <li><a href="posts/2021/02/cve-2021-25648-mobile-application-testes-de-codigo-privilege-escalation/">
+                                CVE-2021-25648 - Privilege Escalation on Mobile Application "Testes de Código"</a> » 15 Fev 2021</li>
+                            <li><a href="posts/2021/01/cve-2021-25647-mobile-application-testes-de-codigo-stored-xss/">
+                                CVE-2021-25647 - Stored XSS on mobile application "Testes de Código"</a> » 27 Jan 2021</li>
+                            <li><a href="posts/2020/12/ciberperseu-2020-pastemyshell-writeup-forensics-network-reverse/">
+                                CiberPerseu 2020 CTF - "PasteMyShell" Writeup - Forensics</a> » 04 Dec 2020</li>
+                            <li><a href="posts/2020/11/dragonsector-ctf-2020-retrozeit-reverse-engineering/">
+                                DragonCTF 2020 - "RetroZeit" Writeup - Reverse Engineering</a> » 22 Nov 2020</li>
+                            <li><a href="posts/2020/08/rcts-cert-summer-ctf-2020-forensics-250-writeup/">
+                                RCTS-CERT Summer CTF 2020 - Forensics250 Challenge Writeup</a> » 6 Aug 2020</li>
+                            <li><a href="posts/2020/07/cve-2020-1350-windows-dns-server-vulnerability-sigred/">
+                                CVE-2020-1350 - Windows DNS Server Vulnerability - SIGRed</a> » 16 Jul 2020</li>
+                            <li><a href="posts/2020/07/win32-remote-buffer-overflow-brainpan/">
+                                Win32 Remote Buffer Overflow Challenge - Brainpan</a> » 10 Jul 2020</li>
+			                <li><a href="posts/2020/06/idor-alibaba-group-subdomain-bugbounty/">
+			                    Bug Bounty - IDOR in domain of Alibaba Group - Taobao</a> » 24 Jun 2020</li>
+			                <li><a href="posts/2020/04/backdoor-search-engine/">
+			                    Backdoor Search Engine - Vulnerable & compromised systems indexed by Google Search</a> » 25 Apr 2020</li>
+			                <li><a href="posts/2019/12/hack-the-box-control-writeup-pentest/">
+			                    Hack The Box Labs - <i>"Control"</i> Writeup</a> » 28 Dec 2019</li>
+			                <li><a href="posts/2019/12/hack-the-box-resolute-writeup-pentest/">
+			                    Hack The Box Labs - <i>"Resolute"</i> Writeup</a> » 18 Dec 2019</li>
+		                </ol>
+                    </div>
+                    
+                    <!--
+                    <div id="page2" style="display: none">
+		                <ol>
+                            <li><a href="lorem/">
+                                Lorem Ipsum</a> » 01 Jan 1970</li>
+                            
+		                </ol>
+                    </div>
+                    -->
+                    
+                    <div id="pagination">
+                        <center>
+                            <h5>
+                                <a href="javascript:prevPage()">«</a>
+                                <a href="javascript:displayPage(1);">1</a>
+                                <!--<a href="javascript:displayPage(2);">2</a>
+                                     <a href="javascript:displayPage(3);">3</a>
+                                -->
+                                <a href="javascript:nextPage()">»</a>
+                            </h5>
+                        </center>
+                        
+                        <script>
+                         // "Pagination" lel
+                         var currPage = 1;
+                         var numPages = 1;
+                         
+                         function hidePage(p){
+                             document.getElementById("page"+p).style = "display: none"; 
+                         }
+                         
+                         function displayPage(p){
+                             hidePage(currPage);
+                             document.getElementById("page"+p).style = "display: block";
+                             currPage = p;
+                         }
+
+                         function prevPage(){
+                             displayPage(Math.max(1, currPage-1));
+                         }
+                         
+                         function nextPage(){
+                             displayPage(Math.min(numPages, currPage+1));
+                         }
+                         
+                        </script>
+                        
+                    </div>
+		        </div>
+		        
+		        
+		        <div id="profile" class="section">
+		            <div class="column col3">
+			            <table id="bioinfo">
+			                <tbody>
+				                <tr>
+				                    <td class="odd">Name</td>
+				                    <td class="even">João Varelas</td>
+				                </tr>
+				                <tr>
+				                    <td class="odd">Location</td>
+				                    <td class="even">Porto, Portugal</td>
+				                </tr>
+				                
+				                <tr>
+				                    <td class="odd">Languages</td>
+				                    <td class="even">Python, C/C++, Java, PHP</td>
+				                </tr>
+				                
+				                <tr>
+				                    <td class="odd">Operating System</td>
+				                    <td class="even">Debian 10</td>
+				                </tr>
+				                <tr>
+				                    <td class="odd">Email</td>
+				                    <td class="even">varelas@pm.me</td>
+				                </tr>
+			                </tbody>
+			            </table>
+			            
+			            
+			            <ul class="social">
+			                <li><a href="https://twitter.com/joaovarelas" class="external" target="_blank">
+                                <img src="img/twitter.png" alt="Twitter"></a></li>
+			                <li><a href="https://github.com/joaovarelas" class="external" target="_blank">
+                                <img src="img/github.png" alt="Github"></a></li>
+			                <li><a href="https://www.linkedin.com/in/joaovarelas/" class="external" target="_blank">
+                                <img src="img/linkedin.png" alt="Linkedin"></a></li>
+			            </ul>
+		            </div>
+	                
+		            <div class="column col6 pl-30">
+			            <img src="img/photo.png" class="pl-30p">
+			            <p style="font-size: 14px;">
+                            <br>
+			                · Computer Science student at University of Porto.<br>
+                           	· Focused on modifying computer behavior & taking control of it.<br>
+			                · Hacking multiple capture-the-flag challenges and attending<br>
+			                &nbsp;&nbsp;security events together with team
+                            <a style="color:#fff;" href="https://xstf.pt" target="_blank"><u>xSTF</u></a> both local and remote.
+			            </p>
+			            
+			            <blockquote>
+			                <p>The quieter you become, the more you are able to hear.</p>
+			            </blockquote>
+			            
+			            <!--<p><a href="#" alt="Curriculum Vitæ">Download PDF resume*</a></p> -->
+		            </div>
+		        </div>
+
+		        
+		        <div id="contact" class="section">
+		            <div class="column col3">			
+			            <p>
+			                E-mail: varelas@pm.me
+			                <br />
+			                Academic: jvarelas@fc.up.pt
+			            </p>
+                        
+			            <pre style="font-family: monospace; font-size:9px;">
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+mQENBF1io8EBCADDJc3IjOZ+/4UcnkocMoVj4IGdR+3y873UrtjlXWuys9pQBAXi
+liyv3VUD8QN+LETRTWUYgFptNaJV8l5AXVH8iXH6IJNO2OtXi/qfKhytHnDd67gg
+D1U5xIKzKSjfR8J7cp713VjR/rRVH8xQNa7qtdXOHXGKRgyNHr+vP2R/VvkecTKv
+LFrJguHePkgcd8LXS2R1T4fnCmIKc7PHpp9vNRjDGbbK9d2hffGu+kpgTr483XX9
+MOWoxke6F6Pqj3aHvg9tYSG2jPIipcXiui434i4x3WG1bL7+C6VgvggJjXvLxi4c
+Nz+NFu0XOY+Hhdhren/N1Zxpv+EEl543CPCxABEBAAG0DXZhcmVsYXNAcG0ubWWJ
+AVQEEwEIAD4WIQS9zcpXVXoBlZ0VFz+MIKcRCsZG+QUCXWKjwQIbAwUJA8N+7wUL
+CQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRCMIKcRCsZG+TQnCAClptEWNFLQp+wF
+lTEUc1edCSinzuensw+T1P8nSYO0ytapvRWkkkORJPEHoW+8GquNzLIZweKOZtTs
+kOojVrCzSsOr8H8B6LUoCCnj0vz8wq+9b2DAHO/muDLf8yba71CYtUMXCrcL4Bh3
+XF+65hFJXGc13VxDxqpIEF2+v5nXwfJ7o0XYIrLdNGAiZsaVZ/dsc/VN/PidQCSV
+xvPhGg7Tpk5vr9qnb0ZL/QALaieTk+gQ7vu3wCasX3glDoutqhER/quMVL9C9K5W
+6gi4dH88gAX91UkVdWygG7p/SZKK/mzs1ug1ok7krp/IfNyHNBytLkuaRoEvf8n4
+yiOtFpQmuQENBF1io8EBCADFaia+wLb74MMEx6F+WiX3jXw3Aa34VOuNb3VnvMwt
+jBJqzMcQdXqJ/gsMlY/7DJDPIwHGwybi8RmBz50nt7rCqB4/WwvoPXCeXpFzAKXi
+2bvyAlRJrFCg5aonJUqXlsrlag03HiiO7gVRaXEmQZOGCm4sG5jd8hgL9aqMSNmB
++q0ZXwkMfS/xz3lMJyXrvNe+RhETqDQb/lsuHNaX4DyxhggEhZ+aSK8M9u1ptdRG
+gpKNpYYPTMZziN5VtG62f56jU9oY5NOaFMvu7EtS+OLUSn+5ZYPLer18VGKWue1M
+2GrogCZOJCzZv22nFrX+80md/dgu3/v70R3uviA9AUazABEBAAGJATwEGAEIACYW
+IQS9zcpXVXoBlZ0VFz+MIKcRCsZG+QUCXWKjwQIbDAUJA8N+7wAKCRCMIKcRCsZG
++XyfB/9wb2FTSr1W13LsPF9G9nSj3pXvJc7HI0U7hUln/goo2Arsg9CfG5bg9Q5M
+/Hu/FYkeZA7lPs/fWmB7nDlhFsG0WSemOnXoM3V0TOFxLXjipI4khw2en+BTj2ou
+NPBNk9m9SNj0D5fKDhKxSP0Fmv/WmKhkg4pxDVmMpZLQXkAFdU5ihjyOLivtmLoZ
+W6hNWF8tjFR7aevKPliYo7H6bizTWkmIo6yK8yWoDdseamcudJSY1zdLfnzHX6uc
+22y8jbJJL7o5d8xbUQ5KJA/47U33ZNvID3W8EUxEwG67Uw7bn3g5LvJ3qnRFtzS6
+NEcGqwbS42jaDwjQo4/5FUQrabeG
+=066v
+-----END PGP PUBLIC KEY BLOCK-----
+			            </pre>
+			            
+		            </div>
+		            <div class="column col5 pl-50">
+
+			            
+			            <form id="contactform" action="https://formsubmit.co/584eff233166f4fbe21e1abb4145414b" method="POST">
+			                <p class="column col4"><label for="name">Name:</label><input name="name" id="_name" type="text" required=""></p>
+			                <p class="column col4"><label for="email">E-mail:</label><input name="email" id="_email" type="email" required=""></p>
+			                <p class="column col8"><label for="message">Message:</label><textarea rows="10" name="message" id="_message" required=""></textarea></p>
+			                <input type="hidden" name="_subject" value="New message from contact form" />
+			                <!--<input type="hidden" name="_after" value="https://vrls.ws/">-->
+			                <input type="text" name="_honey" style="display:none"><!-- Do not fill this field -->
+                            <input type="hidden" name="_captcha" value="false">
+			                <p class="column col8">
+                                <input id="_sendbtn" class="button" value="Send"
+                                       onclick="this.disabled=true; encrypt();" type="button">
+                            </p>
+			            </form>
+		            </div>
+		        </div>
+	        </div>
+	        
+	        <div id="footer">
+		        · Original design by <a href="https://andreasviklund.com/" target="_blank">Andreas Viklund</a> ·
+	        </div>
+	        
+	        <script type="text/javascript">
+	         $(document).ready(function() {
+		         $(".section").not(":first").hide();
+		         $("ul#menu li:first").addClass("active").show(); 
+		         
+		         $("ul#menu li").click(function() {
+		             $("ul#menu li.active").removeClass("active");
+		             $(this).addClass("active");
+		             $(".section").slideUp();       
+		             $($('a',this).attr("href")).slideDown('slow');
+		             
+		             return false;
+		         });
+		         
+	         });
+	         
+	        </script>
+            <script async src="https://www.googletagmanager.com/gtag/js?id=UA-156800674-1"></script>
+            <script>
+	         window.dataLayer = window.dataLayer || [];
+	         function gtag(){dataLayer.push(arguments);}
+	         gtag('js', new Date());
+	         gtag('config', 'UA-156800674-1');
+            </script>
+	    </div>
+	    
+    </body>
+    
+</html>
+
+

@@ -1,0 +1,273 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    
+    <head>
+        <title>IDOR in domain of Alibaba Group - Taobao</title>
+	    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+	    <link type="text/css" rel="stylesheet" href="../../../../css/RobotoCondensed.css" />
+		<link type="text/css" rel="stylesheet" href="../../../../css/style.css" media="screen"/>
+	    <script type="text/javascript" src="../../../../js/jquery-1.js"></script>
+        <meta name="thumbnail" content="images/27a4dc01e0602dda0cf496c0203bb2a2.png" />
+    </head>
+    
+    <body>
+	    <div id="mainwrap">
+	        <br/>
+	        <header>
+		        
+		        <!--
+		             Feel free to send feedback or suggestions
+		             through PGP contact form or email.
+		        -->
+
+	        </header>
+	        
+	        <div id="mainwrap">
+		        <div id="content-post">
+
+		            <div id="posts" class="section-post">	    
+			            <h2>IDOR in domain of Alibaba Group - Taobao</h2>
+			            <hr/>
+                        <p style="text-align: right">
+                            <i>24-06-2020</i>
+                        </p>
+                        
+			            <p><h3>Introduction</h3></p>
+			            <p>
+			                Some programs were made public in HackerOne bug bounty platform last month, including
+			                <a href="https://hackerone.com/alibaba">Alibaba Group Bug Bounty Program</a>.
+			                After having a look at their program details I've noticed they had pretty standard rewards but
+			                a huge scope to explore.
+			            </p>
+			            <p>
+			                Alibaba Group is made up of private companies based in China whose businesses are focused on
+			                e-commerce, retail sales and online payment services. They also power up a search engine for
+			                purchases and cloud computing services.
+			            </p>
+			            <p>
+			                The main services of this group are, just to name a few:
+			                <ol>
+				                <li>Alibaba</li>
+				                <li>Alibaba Cloud aka Aliyun</li>
+				                <li>Aliexpress</li>
+				                <li>Alipay</li>
+				                <li>Taobao</li>
+				                <li>Tmall</li>
+			                </ol>
+			            </p>
+
+			            <p><h3>Scope</h3></p>
+			            <p>
+			                Their scope include Taobao assets. I decided to begin here.
+			            </p>
+			            <p>
+			                As usual, started by doing some subdomain enumeration using common tools such as:
+			                <a href="https://github.com/OWASP/Amass">Amass</a>,
+			                <a href="https://github.com/aboul3la/Sublist3r">Sublist3r</a>,
+			                <a href="https://github.com/tomnomnom/assetfinder">Assetfinder</a> and
+			                <a href="https://github.com/Edu4rdSHL/findomain">Findomain</a>.
+
+			                Also used online tools to perform passive reconaissance like
+			                <a href="https://subdomainfinder.c99.nl/">C99 Subdomain Finder</a>.
+			            </p>
+			            <p>
+			                The scan generated an output of more than 2 MBs of subomains related to Taobao
+			                itself, that's almost 100.000 lines of unique subdomains.
+			            </p>
+
+			            <p><h3>Exploration</h3></p>
+			            <p>
+			                By navigating a while through subdomains I've found this particular one
+			                <code-line>dianshi.taobao.com</code-line>. Since I'm not fluent in Chinese I've used
+			                Google Chrome to translate the text on this page in order to understand the context.
+			            </p>
+			            <p>
+			                <center><img width="800" src="images/27a4dc01e0602dda0cf496c0203bb2a2.png" /></center>
+			            </p>
+			            <p>
+			                Turns out this is a cable TV service, or similar. The referenced pages are
+			                <code-line>TV Taobao</code-line>, <code-line>Watch-buy</code-line> and <code-line>Voice</code-line>.
+			                This frontend does not have anything interesting as it seems a static HTML page with
+			                some information on it.
+			            </p>
+			            <p>
+			                At this point, more enumeration was performed to increase attack surface via
+			                sub directory scanning with <a href="https://github.com/OJ/gobuster">Gobuster</a>,
+			                which is pretty quick for this task together with wordlists.
+			            </p>
+			            <p>
+			                This web server doesn't return a <code-line>404</code-line> status code when a page is not
+			                found, instead it returns a <code-line>200</code-line>.
+			                This difficults finding sub directories as it will consider every word in wordlist
+			                to be a valid directory in website.
+			            </p>
+			            <p>
+			                To be able to distinguish found pages from not-found pages,
+			                <a href="https://github.com/OJ/gobuster">Gobuster</a> can be configured
+			                to display HTTP body response length (argument flag <code-line>-l</code-line>). This way it is possible
+			                to compare response and decide whether is a valid directory or not. 
+			            </p>
+
+			            <p>
+			                By tweaking and running the tool, it found the directory <code-line>/pxb/</code-line>. 
+			            </p>
+			            <p>
+			                <center><img width="800" src="images/98f388c8f997f026311154d85b40df84.png" /></center>
+			            </p>
+
+			            <p>
+			                The page took a little to load since it runs over Java <code-line>Spring Framework</code-line>.
+			                Having a look at the interface it is very similar to the index page, however, seems
+			                to be way more interactive and with functionality.
+			            </p>
+			            <p>
+			                Quickly noticed the top right <code-line>Login/Register</code-line> and logged in via my Taobao
+			                test <code-line>user1</code-line> account. Every website from the group shares the same universal
+			                authentication mechanism.
+			                This means credentials will work everywhere within the services of Alibaba Group.
+			            </p>
+			            <p>
+			                After logging in with the test account, the server displayed a page with the following
+			                error message:
+			                <code-line>Your shop does not exist or is not the owner account of the shop.
+Does not meet user access requirements, temporarily unable to view.</code-line>
+			                
+			            </p>
+			            <p>
+			                <center><img width="800" src="images/2f0e9814c136d55ecfa148e03b8bc131.png" /></center>
+			            </p>
+			            <p>
+			                Unhappy with the results, decided to explore further. The only permissions the test account
+			                had was to read and modify its own personal details, such as full name, email, phone, etc.
+			            </p>
+
+			            
+			            <p><h3>Exploitation</h3></p>
+			            <p>
+			                To understand what was happening behind the scenes I've started Burp Suite to intercept
+			                and analyze HTTP requests.
+			                When editing personal details of test account, immediately observed that input
+			                verification was performed on client-side.
+			            </p>
+			            <p>
+			                For example, modifying e-mail to
+			                <code-line>not_a_valid_email</code-line> in web browser would trigger a responsive error message,
+			                and modifying it in Burp repeater would successfully change it.
+			                The response in JSON format included a parameter named <code-line>unb</code-line> which was
+			                also a valid cookie with a value that represents a big integer of <code-line>user ID</code-line>.
+			            </p>
+			            <p>
+			                At this time, created a second test account <code-line>user2</code-line> and grabbed the user ID.
+			            </p>
+			            <p>
+			                By sending the same previous request while authenticated as <code-line>user1</code-line> and tampering
+			                the value of <code-line>unb</code-line> with the new created second account ID, modifies
+			                the user information of <code-line>user2</code-line>.
+			            </p>
+			            
+			            <p>
+			                <center><img width="400" src="images/7dc429ac50d9099194658d965a742dfe.png" /></center>
+			            </p>
+			            
+			            <p>
+			                This can be considered a valid IDOR as the web application relies on
+			                client-side values to perform operations. An attacker is able to <i>bypass</i> access
+			                controls by changing the ID to anyone else ID. 
+			            </p>
+			            <p>
+			                Even while validating this vulnerability with success, the permission problem still persist.
+			                In order to use other features the user must be authenticated with a shop account 
+			                since test accounts hadn't enough fancy permissions.
+			            </p>
+			            <p>
+			                As the website relies mostly on client's browser to execute Javascript, the tool
+			                <a href="https://github.com/jobertabma/relative-url-extractor">Relative-url-extractor</a>
+			                revealed interesting results against the included Javascript files. 
+			            </p>
+			            <p>
+			                The tool returned a lot of other API endpoints that weren't used in main page. For example,
+			                the endpoints
+			                <ol>
+				                <li><code-line>/api/user/view_info</code-line></li>
+				                <li><code-line>/api/user/update_info</code-line></li>
+				                <li><code-line>/api/user/check_level</code-line></li>
+			                </ol>
+			            </p>
+			            <p>
+			                The user ID's were not ideal to perform a brute-force because they were 13 digits long.
+			                It would be exhaustive to send a lot of requests to the server and did not want to
+			                take it down by DDoSing.
+			            </p>
+			            <p>
+			                By doing a Google search with dorks, came across multiple shop user ID's. In fact, these ID's
+			                can be found within Taobao sellers page.
+			            </p>
+			            <p>
+			                Requesting the <code-line>/api/user/check_level</code-line> endpoint with my test account ID results
+			                in <code-line>level 200</code-line> whereas requesting with a shop user ID results in <code-line>level 250</code-line>.
+			            </p>
+			            <p>
+			                There was another interesting API endpoint which wasn't available to simple user accounts but
+			                appeared to work with shop accounts: <code-line>/api/order/create_order?id=</code-line>.
+			            </p>
+			            <p>
+			                <center><img width="400" src="images/9c0521143604a0ed2155d1a1c37e8174.png" /></center>
+			            </p>
+			            
+			            <p>
+                            By tweaking some parameters in Burp Intruder it was possible to observe the following
+                            order history. These orders were created on behalf of privileged users (shop owners).
+			            </p>
+
+                        <p>
+			                <center><img width="700" src="images/c1111977e1529bd9a02574f2ad15eb6c.png" /></center>
+			            </p>
+                        
+                        <p>
+                            Tampering the user ID with a shop ID value and sending a request to this endpoint will
+			                successfully create a new order on behalf of the shop owner! This way it is possible to
+			                leverage the IDOR and perform other privileged operations by escalating vertically.
+                        </p>
+
+			            <p><h3>Timeline</h3></p>
+			            <p>
+			                <ol>
+				                <li>2020-05-05: Reported this vulnerability to HackerOne Alibaba bug bounty program</li>
+				                <li>2020-05-06: Triager closed as <code-line>N/A</code-line> saying that it wasn't a valid
+				                    security issue</li>
+				                <li>...</li>
+				                <li>2020-05-17: Added more context to report since then, but triager
+				                    do not reply anymore</li>
+				                <li>2020-05-18: Contacted Alibaba Security Team directly</li>
+				                <li>2020-05-19: Alibaba Security Team changed status of my submission to <i>ignored</i></li>
+			            </p>
+			            
+			            <p style="margin-top: 5%;"><center><a href="/">⭠ Go Back</a></center></p>
+			            
+		            </div>
+		            
+		        </div>
+		        
+	        </div>
+
+	        <div id="footer">
+		        · Original design by <a href="https://andreasviklund.com/" target="_blank">Andreas Viklund</a> ·
+	        </div>
+	        
+	        
+	    </div>
+
+	    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-156800674-1"></script>
+	    <script>
+	     window.dataLayer = window.dataLayer || [];
+	     function gtag(){dataLayer.push(arguments);}
+	     gtag('js', new Date());
+
+	     gtag('config', 'UA-156800674-1');
+	    </script>
+
+    </body>
+
+</html>
+
+

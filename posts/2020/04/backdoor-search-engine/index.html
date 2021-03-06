@@ -1,0 +1,259 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    
+    <head>
+        <title>Google - Backdoor Search Engine</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+        <link type="text/css" rel="stylesheet" href="../../../../css/RobotoCondensed.css" />
+        <link type="text/css" rel="stylesheet" href="../../../../css/style.css" media="screen"/>
+        <script type="text/javascript" src="../../../../js/jquery-1.js"></script>
+        <meta name="thumbnail" content="images/3767b503cbfca139344deb0978dab32a.png" />
+    </head>
+    
+    <body>
+        <div id="mainwrap">
+            <br/>
+            <header>
+	            
+	            <!--
+	                 Feel free to send feedback or suggestions
+	                 through PGP contact form or email.
+	            -->
+
+            </header>
+            
+            <div id="mainwrap">
+	            <div id="content-post">
+
+	                <div id="posts" class="section-post">	    
+	                    <h2>Backdoor Search Engine - Vulnerable & compromised systems indexed by Google Search</h2>
+	                    <hr/>
+                        <p style="text-align: right">
+                            <i>25-04-2020</i>
+                        </p>
+	                    <center>
+	                        <img src="images/3767b503cbfca139344deb0978dab32a.png" />
+	                        <br/>
+	                        <i>Image credits: TechCrunch</i>
+	                    </center>
+	                    <p><h3>Introduction</h3></p>
+	                    <p>
+	                        For a long time, Google search is being used by hackers to find specific elements on web applications
+	                        by building customized queries containing advanced search operators.
+	                        Using search results to identify security flaws is known as <i>Google Dorks</i>.
+	                        This concept was introduced in 2002 by a computer security expert, Johnny Long,
+	                        while <i>Using Google as a Security Testing Tool</i><sup><a href="#references">[1]</a></sup>.
+	                    </p>
+	                    <p>
+	                        Searching <code-line>site:net inurl:"intro.asp"</code-line> results in a list of domains ending in
+	                        <code-line>.net</code-line> and URL containing <code-line>intro.asp</code-line>.
+	                        Crafting and executing a search of an effective term (or <i>dork</i>) respecting
+	                        the syntax may lead to results that lie in range of security issues such as sensitive information
+	                        disclosure, SQL injection points, cross-site scripting, file inclusion and sometimes
+	                        uploaded backdoors. As demonstrated in Long's presentation<sup><a href="#references">[2]</a></sup>
+	                        it is also possible to find error messages with a certain level of verbosity, backup archives and
+	                        diverse types of documents.
+	                    </p>
+	                    <p>
+	                        Taking advantage of big internet data collection for intelligence purposes (<i>OSINT</i>) can fall
+	                        in a less ethical category as described in <sup><a href="#references">[3]</a></sup> since
+	                        most of the times this type of information is handled directly.
+	                        The main purpose of this research is not focusing on common well-known <i>dorks</i> but to
+	                        explore new ways of constructing search terms that lead to yet unexplored results.
+	                    </p>
+
+	                    <p><h3>Unusual keywords</h3></p>
+	                    <p>
+	                        A few wild bytes appeared while testing a program feature under WineHQ environment due to memory leak.
+	                        These bytes were printed as CJK characters because of encoding.
+	                        For curiosity's sake, some searches (and translations) were performed to check if spitted out text
+	                        had something meaningful.
+	                        
+	                        A fair example is string <code-line>&#xC101;&#x4883;&#xC001;&#x8850;&#xFF0F;&#xB611;&#x84D2;&#x75E5;&#xE9A3;&#xF4FF;&#xFFC7;&#x4424;&#x801;&#xE9;&#x4DF2;&#xFFFF;</code-line>.
+	                        When searched, returns a lot of binary files, documents and images. There is a high chance of finding web
+	                        applications vulnerable to path traversal given how often these files are usually included. Note that
+	                        results may vary according to your session and location.
+	                    </p>
+	                    <p>
+	                        Turns out some strings would translate to <code-line>https://eur-lex.europa.eu/</code-line>. 
+	                        Very likely Google Translate has a sort of artificially intelligent mechanism intended to
+	                        assist in translating crawled web pages autonomously.
+
+	                        A similar behavior can be found in a report posted at Reddit<sup><a href="#references">[4]</a></sup>
+	                        (thanks to my brother YaBa) where a user tried to translate <code-line>TODOTODOOOTODOTODOTODOTODO...</code-line>
+	                        and got <code-line>TripAdvisor bietet Ihnen kostenlose und einfache...</code-line> instead.	    
+	                        <center><img src="images/a74ac5e675f79876011cdcad97b8c5e1.gif" /></center>
+	                    </p>
+	                    
+	                    
+	                    <p><h3>Generating patterns</h3></p>
+      	                <p>
+	                        When testing a program, part of given input string was leaked from memory but with a different encoding.
+	                        For example, the input <code-line>AAAAAAAA</code-line> produce the string
+	                        <code-line>&#x1A8;&#x198;&#x4141;&#x4141;&#x4141;&#x4141;y</code-line>.
+	                        After dissecting the output, it was possible to conclude this string was Unicode escaped.
+	                        Each two bytes were grouped and presented as one Unicode codepoint, i.e.,
+	                        <code-line>\u01a8\u0198\u4141\u4141\u4141\u4141\u0079</code-line>.
+	                    </p>
+
+	                    <p>
+	                        The next step was using a specific keyword as input to produce a reasonable string.
+	                        Providing the word <code-line>glibcglibcglibc</code-line> as input we can observe the returned value being
+	                        the following:
+
+	                        <center><img src="images/f048ee01526a2e54dde187109d30d259.png" />
+		                        <br />
+		                        <i>dencode.com</i></center>
+	                        
+	                    </p>
+
+	                    <p>
+	                        This particular string was created by the hexadecimal sequence
+	                        <code-line>\x01\xa8\x01\x98\x6c\x67\x62\x69\x67\x63\x69\x6c\x6e\x69\x00\x79</code-line>
+	                        equivalent to <code-line>&#xFFFD;&#xFFFD;lgbigcilniy</code-line> in ASCII (notice the endianness).
+	                    </p>
+	                    <p>
+	                        At this moment we have a method to build custom strings with specific words that could perhaps guide our search.
+	                        In other words, providing a concrete string will possibly make our search less dumb even though
+	                        it is composed mostly by "random" characters. Google is able to extract and process information contained in
+	                        such strings as observed while using translation feature.
+	                    </p>
+	                    
+	                    <p><h3>Results</h3></p>
+	                    <p>
+	                        By searching the previously generated string we can expect <code-line>libc</code-line> related
+	                        stuff to be displayed in results (e.g. .so libraries).
+	                    </p>
+	                    <p>
+	                        Adding a typical keyword commonly used in webshells parameters <code-line>filesrc</code-line> (intended
+	                        to load local files) to our custom search term will potentially show results of
+	                        uploaded backdoors on compromised servers that are not directly displayed when searching
+	                        more generic terms.
+
+	                        <center><img src="images/f766ac985c47d4887dd57e2b1ff9fa3a.png" /></center>
+
+	                    </p>
+	                    <p>First result contains malicious PHP code that was likely uploaded
+	                        by a cyber attacker and includes a simple interface displaying system information, a file upload
+	                        function and enable editing files located at a writeable directory.
+	                    </p>
+	                    <p>
+	                        <center><img src="images/836553eb8f1cb0aa36f3b87e66380783.png" width="900" /></center>
+	                    </p>
+
+	                    <p>
+	                        Image demonstrating the view after being redirected from Google search engine.
+	                        The current loaded file (<code-line>libdl.so.2</code-line>) holds a pattern that match our search term.
+	                    </p>
+	                    <p>
+	                        It is unknown how and why this particular URL was included into Google dataset.
+	                        Probably due to Google's optimization when selecting relevant results to display.
+	                        Search engines effectiveness tend to be more precise now than some years ago<sup><a href="#references">[5]</a></sup>.
+	                        Nevertheless, this does not explain why such URL is indexed with a <i>.so</i> file loaded.
+	                        From my personal experience in threat intelligence (which is not cutting edge), it’s hard to
+	                        believe an attacker has interest in opening a <i>.so</i> file over this interface for two reasons:
+	                        first, it does not contain valuable information (considering this scenario); 
+	                        second, editing and saving a non-text file in web shell interface would corrupt it, leading to
+	                        malfunction of programs requiring this shared object to run.
+	                    </p>
+
+	                    
+	                    <p><h3>Conclusion</h3></p>
+	                    <p>
+	                        Constructing creative search expressions can lead to interesting results. This may be useful while
+	                        gathering information during a pentest reconnaissance and enumeration phase but on the other side
+	                        it could also be convenient to detect threats.
+	                    </p>
+	                    <p>
+	                        It is now evident that Google search engine do recognize when a user searches for terms similar
+	                        to strings we presented. We started by observing translations from CJK characters sequences to a URL.
+	                        Then, using a first example we got multiple results of binary files. By crafting a custom string, we
+	                        were able to find system libraries included in web pages via uploaded malicious scripts, thus proving
+	                        Google has indexed numerous URLs likewise.
+	                    </p>
+	                    <p>
+	                        The final outcome of gathering Google results using various string manipulation techniques as described
+	                        above is the following.
+	                    </p>
+	                    <p>
+	                        <center><img src="images/0d1cafed7c98f615a96d39e94054b1f9.png" width="900" /></center>
+	                    </p>
+	                    
+	                    <p><h3 id="references">References</h3></p>
+	                    <p>
+	                        <ol>
+		                        <li>
+		                            [1]<a href="https://www.blackhat.com/presentations/bh-europe-05/BH_EU_05-Long.pdf">
+		                            Long, J. (2005). Using Google as a Security Testing Tool [Slides].
+		                            https://www.blackhat.com/presentations/bh-europe-05/BH_EU_05-Long.pdf</a>
+		                        </li>
+		                        <li>
+		                            [2]<a href="https://www.blackhat.com/presentations/bh-asia-04/bh-jp-04-pdfs/bh-jp-04-long.pdf">
+		                            Long, J. (2004). You found that on Google? [Slides].
+		                            https://www.blackhat.com/presentations/bh-asia-04/bh-jp-04-pdfs/bh-jp-04-long.pdf</a>
+		                        </li>
+		                        <li>
+		                            [3]<a href="http://cejsh.icm.edu.pl/cejsh/element/bwmeta1.element.desklight-2fc6e5dc-a980-4da0-b53b-d7adcb536c20">
+		                            Mider, D. (2019). The Internet Data Collection with the Google Hacking Tool – White, Grey or
+		                            Black Open-Source Intelligence?
+		                            - Przegląd Bezpieczeństwa Wewnętrznego - Volume 11, Issue 20 - CEJSH - Yadda.
+		                            http://cejsh.icm.edu.pl/cejsh/element/bwmeta1.element.desklight-2fc6e5dc-a980-4da0-b53b-d7adcb536c20</a>
+		                        </li>
+		                        <li>
+		                            [4]<a href="https://www.reddit.com/r/ProgrammerHumor/comments/6po5n2/i_might_have_found_a_bug_in_google_translate/">
+		                            Reddit (2017). https://www.reddit.com/r/ProgrammerHumor/comments/6po5n2/i_might_have_found_a_bug_in_google_translate/</a>
+		                        </li>
+		                        <li>
+		                            [5]<a href="https://arxiv.org/pdf/1511.05800.pdf">
+		                            Lewandowski, D. (2015). The Retrieval Effectiveness of Web Search Engines: Considering Results Descriptions.
+		                            http://arxiv.org/abs/1511.05800</a>
+		                        </li>
+	                        </ol>
+	                    </p>
+
+	                    <p><h3>Appendix</h3></p>
+	                    <p>
+	                        Strings used (base64 encoded):
+	                        <ol>
+		                        <li>7ISB5KKD7ICB6KGQ77yP65iR6JOS55el7qaj75O/77+H5JCk4KCBw6nkt7Lvv78=</li>
+		                        <li>5rGn5omp5p2j5qWs5rmpIGZpbGVzcmM=</li>
+	                        </ol>
+	                    </p>
+	                    <p>
+	                        Archived pages in Wayback Machine (slightly different results):
+	                        <ol>
+		                        <li>http://web.archive.org/web/20200425134936/https://www.google.com/search?source=hp&ei=5D-kXuvzN-OflwS8rrPgCg&q=%EC%84%81%E4%A2%83%EC%80%81%E8%A1%90%EF%BC%8F%EB%98%91%E8%93%92%E7%97%A5%EE%A6%A3%EF%93%BF%EF%BF%87%E4%90%A4%E0%A0%81%C3%A9%E4%B7%B2%EF%BF%BF&oq=%EC%84%81%E4%A2%83%EC%80%81%E8%A1%90%EF%BC%8F%EB%98%91%E8%93%92%E7%97%A5%EE%A6%A3%EF%93%BF%EF%BF%87%E4%90%A4%E0%A0%81%C3%A9%E4%B7%B2%EF%BF%BF&gs_lcp=CgZwc3ktYWIQA1BQWFBg7wFoAHAAeACAAQCIAQCSAQCYAQCgAQKgAQGqAQdnd3Mtd2l6&sclient=psy-ab&ved=0ahUKEwjr9cr_24PpAhXjz4UKHTzXDKwQ4dUDCAY&uact=5</li>
+		                        <li>http://web.archive.org/web/20200425135059/https://www.google.com/search?source=hp&ei=N0CkXuLxGfKPlwSGnJvgDw&q=%E6%B1%A7%E6%89%A9%E6%9D%A3%E6%A5%AC%E6%B9%A9+filesrc&oq=%E6%B1%A7%E6%89%A9%E6%9D%A3%E6%A5%AC%E6%B9%A9+filesrc&gs_lcp=CgZwc3ktYWIQA1DSAVjSAWC9AmgAcAB4AIABAIgBAJIBAJgBAKABAqABAaoBB2d3cy13aXo&sclient=psy-ab&ved=0ahUKEwii6fam3IPpAhXyx4UKHQbOBvwQ4dUDCAY&uact=5</li>
+	                        </ol>
+	                    </p>
+	                    
+
+	                    <p style="margin-top: 5%;"><center><a href="/">← Go Back</a></center></p>
+	                    
+	                </div>
+	                
+	            </div>
+	            
+            </div>
+
+            <div id="footer">
+	            · Original design by <a href="https://andreasviklund.com/" target="_blank">Andreas Viklund</a> ·
+            </div>
+            
+            
+        </div>
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-156800674-1"></script>
+        <script>
+         window.dataLayer = window.dataLayer || [];
+         function gtag(){dataLayer.push(arguments);}
+         gtag('js', new Date());
+
+         gtag('config', 'UA-156800674-1');
+        </script>
+
+    </body>
+
+</html>
+
+

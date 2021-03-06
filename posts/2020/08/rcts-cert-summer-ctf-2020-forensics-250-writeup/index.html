@@ -1,0 +1,248 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    
+    <head>
+        <title>RCTS-CERT Summer 2020 CTF - Forensics250 Writeup</title>
+	    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+	    <link type="text/css" rel="stylesheet" href="../../../../css/RobotoCondensed.css" />
+	 	<link type="text/css" rel="stylesheet" href="../../../../css/style.css" media="screen" />
+	    <script type="text/javascript" src="../../../../js/jquery-1.js"></script>
+        <meta name="thumbnail" content="images/8.png" />
+    </head>
+    
+    <body>
+	    <div id="mainwrap">
+	        <br/>
+	        <header>
+		        
+		        <!--
+		             Feel free to send feedback or suggestions
+		             through PGP contact form or email.
+		        -->
+
+	        </header>
+	        
+	        <div id="mainwrap">
+		        <div id="content-post">
+
+		            <div id="posts" class="section-post">	    
+			            <h2>RCTS-CERT Summer 2020 CTF - Forensics250 Writeup</h2>
+			            <hr/>
+                        <p style="text-align: right">
+                            <i>06-08-2020</i>
+                        </p>
+			            <p><h3>Introduction</h3></p>
+			            <p>
+                            This challenge is based on <code-line>vm2.ova</code-line> file which is
+                            used by virtualization applications
+                            such as Oracle VM Virtualbox and VMWare Workstation.
+                        </p>
+                        <p>
+                            Description makes reference to <code-line>OpenBSD</code-line> operating system.
+                            We can assume that the <code-line>ova</code-line> file contains a <code-line>OpenBSD</code-line> virtual machine.
+			            </p>
+                        
+                        <p><h3>Analysis</h3></p>
+                        <p>
+                            Started by importing the virtual machine into our Virtualbox environment. 
+                        </p>
+		                <p><center><img src="images/1.png" width="550"></center></p>
+                        
+                        <p>
+                            When we start the virtual machine, the following command line is presented.
+                        </p>
+		                <p><center><img src="images/2.png"></center></p>
+
+                        <p>
+                            There is a time span of <code-line>5 seconds</code-line> that allows user to type
+                            any commands while at OpenBSD command line before it boots automatically.
+                        </p>
+                        <p>
+                            We can boot the machine by pressing <code-line>ENTER</code-line>.
+                        </p>
+                        <p><center><img src="images/3.png"></center></p>
+                        <p>
+                            The machine is now running, however, we don't have the credentials
+                            to log in. 
+                        </p>
+                        <p>
+                            Since we are able to pass flags at boot command line, we can force
+                            the system to <code-line>boot into single user mode</code-line>.
+                        </p>
+                        <p>
+                            According to <code-line>OpenBSD</code-line> FAQ:
+                            
+                            <code-line>
+                                The basic process to regain root is to boot into single user mode, mount the / and /usr partitions and run passwd(1) to change the root password:
+
+                                Boot into single user mode. This part of the process varies depending on your platform. For amd64 and i386, the second stage boot loader pauses for a few seconds to give you a chance to provide parameters to the kernel. Here you can see we pass the -s flag to boot(8).</code-line>
+                        </p>
+
+                        <p>
+                            Therefore, we are able to get a root shell over the <code-line>OpenBSD</code-line> machine
+                            by typing <code-line>boot -s</code-line>.
+                        </p>
+                        <p><center><img src="images/4.png"></center></p>
+                        <p><center><img src="images/5.png"></center></p>
+
+                        <p>
+                            At this time we have access to the machine and ready to explore further.
+                        </p>
+
+                        <p><h3>Acquisition</h3></p>
+                        <p>
+                            While exploring the filesystem, we found two interesting files:
+                            <ol>
+                                <li><code-line>/etc/master.passwd</code-line></li>
+                                <li><code-line>/root/ctf.kdb</code-line></li>
+                            </ol>
+                        </p>
+
+                        <p>
+                            The <code-line>master.passwd</code-line> is the BSD master password file that includes
+                            usernames, passwords and other account information. This file is equivalent
+                            to Unix <code-line>/etc/shadow</code-line>.
+                        </p>
+                        <p>
+                            We obtained <code-line>root</code-line> password hashes from master file and tried to crack
+                            with <code-line>JohnTheRipper</code-line> via dictionary based
+                            attack using <code-line>rockyou.txt</code-line> wordlist, without success.
+                            These hashes are produced using the <code-line>bcrypt</code-line> algorithm based on
+                            <code-line>Blowfish</code-line> cipher and have the following form:
+                            <center><code-line>$2b$[cost]$[22 character salt][31 character hash]</code-line></center>
+                        </p>
+
+                        <p>
+                            Moving on to the next file <code-line>ctf.kdb</code-line>, the extension <code-line>.kdb</code-line>
+                            suggests it is a <code-line>KeePass Password Database</code-line> file.
+                        </p>
+                        <p><center><img src="images/6.png"></center></p>
+                        <p>
+                            At this time we need to acquire the file in order to perform further analysis.
+                        </p>
+                        <p>
+                            Since we are running a <i>vanilla</i> virtual machine, i.e., without any
+                            fancy Virtualbox Guest Additions, we cannot access the filesystem of the
+                            guest machine from our host.
+                        </p>
+                        <p>
+                            There are several approaches to extract the required file. We could
+                            convert the <code-line>VDI disk image</code-line> to a Raw image using the following command:
+                        </p>
+                        <p>
+                            <code-line>vboxmanage clonehd "C:\Users\vrls\VirtualBox VMs\vm2\vm2-disk001.vdi" "D:\CTF\rcts_cert_summer2020\forensics-250\raw_image.img" --format raw</code-line>
+                        </p>
+
+                        <p>
+                            After converting the VDI to <code-line>raw_image.img</code-line> file, we could use, for example,
+                            <code-line>Autopsy</code-line>
+                            digital forensics platform to analyze and extract <code-line>ctf.kdb</code-line> file.
+                        </p>
+
+                        <p>
+                            We could also use file craving techniques, <code-line>binwalk</code-line> to find and extract
+                            the file at a given offset, 7-zip, etc.
+                        </p>
+
+                        <p><center><img src="images/7.png" width="700"></center></p>
+
+                        <p>
+                            The file was successfully extracted using Autopsy software. If we try
+                            to open the password database on <code-line>KeePass</code-line> a master key
+                            input will prompt. Once again, we don't know the password.
+                        </p>
+
+                        <p><center><img src="images/8.png" width="400"></center></p>
+                        
+                        <p><h3>Cracking</h3></p>
+
+                        <p>
+                            A dictionary attack may be useful to recover the <code-line>kdb</code-line> master key.
+                        </p>
+                        <p>
+                            We should use <code-line>keepass2john</code-line> (that is included within JTR toolkit)
+                            to convert the KeePass database to JTR compatible format:
+
+                            <code-line>keepass2john.exe "D:\CTF\rcts_cert_summer2020\forensics-250\ctf.kdb" > "D:\CTF\rcts_cert_summer2020\forensics-250\ctf.kdb.jtr"</code-line>
+                        </p>
+
+                        <p>
+                            Once we have the JTR compatible file, we are ready to start.
+                            By running the following command, it will test all the password combinations
+                            within <code-line>rockyou.txt</code-line> wordlist and, eventually, return the correct
+                            key.
+                        </p>
+                        <p>
+                            When we were solving this challenge, <a href="https://twitter.com/Yanmii_is">@Yanmii_is</a>
+                            turned up the turbo on his machine to speed up the cracking process and retrieve the key 🚀
+                        </p>
+
+                        <p>
+                            <code-line>john "D:\CTF\rcts_cert_summer2020\forensics-250\ctf.kdb.jtr" --wordlist="D:\Tools\Wordlists\SecLists\rockyou.txt"</code-line>>
+                        </p>
+
+                        <p><center><img src="images/9.png" width="700"></center></p>
+
+                        <p>
+                            At this time we are able to read the KeePass database file. The file
+                            can't be directly opened in KeePass because it was created with an older
+                            1.x version.
+                        </p>
+                        <p>
+                            Instead, we should create a new 2.x database and import <code-line>ctf.kdb</code-line>.
+                        </p>
+                        <p>
+                            After importing the selected file, we can read the flag, thus solving the forensics
+                            challenge :)
+                        </p>
+                        <p>
+                            <center><code-line>flag{keePassIsKewl}</code-line></center>
+                        </p>
+                        <p><center><img src="images/10.png" width="600"></center></p>
+
+                        <p><h3>References</h3></p>
+                        <p>
+                            <ol>
+                                <li><a href="https://summer2020.ctf.cert.rcts.pt/">https://summer2020.ctf.cert.rcts.pt/</a></li>
+                                <li><a href="https://www.openbsd.org/faq/faq8.html#LostPW">https://www.openbsd.org/faq/faq8.html#LostPW</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Bcrypt">https://en.wikipedia.org/wiki/Bcrypt</a></li>
+                                <li><a href="https://www.openwall.com/john/doc/OPTIONS.shtml">https://www.openwall.com/john/doc/OPTIONS.shtml</a></li>
+                                <li><a href="https://medium.com/@lonardogio/convert-vdi-virtualbox-to-raw-in-windows-c96bded29640">https://medium.com/@lonardogio/convert-vdi-virtualbox-to-raw-in-windows-c96bded29640</a></li>
+                                <li><a href="https://bytesoverbombs.io/cracking-everything-with-john-the-ripper-d434f0f6dc1c">https://bytesoverbombs.io/cracking-everything-with-john-the-ripper-d434f0f6dc1c</a></li>
+                                <li><a href="https://jpdias.me/ctf/security/writeup/2020/08/06/rtcs-fccn-summer-ctf.html">https://jpdias.me/ctf/security/writeup/2020/08/06/rtcs-fccn-summer-ctf.html</a></li>
+                            </ol>
+                            
+                        </p>
+
+                        
+                        
+                        
+                        <p style="margin-top: 5%;"><center><a href="/">← Go Back</a></center></p>
+			            
+		            </div>
+		            
+		        </div>
+		        
+	        </div>
+
+	        <div id="footer">
+		        · Original design by <a href="https://andreasviklund.com/" target="_blank">Andreas Viklund</a> ·
+	        </div>
+	        
+	        
+	    </div>
+
+	    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-156800674-1"></script>
+	    <script>
+	     window.dataLayer = window.dataLayer || [];
+	     function gtag(){dataLayer.push(arguments);}
+	     gtag('js', new Date());
+
+	     gtag('config', 'UA-156800674-1');
+	    </script>
+
+    </body>
+
+</html>
+
+

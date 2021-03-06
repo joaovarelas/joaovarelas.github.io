@@ -1,0 +1,260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    
+    <head>
+        <title>CiberPerseu 2020 CTF - "PasteMyShell" Writeup - Forensics</title>
+	    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+	    <link type="text/css" rel="stylesheet" href="../../../../css/RobotoCondensed.css" />
+	 	<link type="text/css" rel="stylesheet" href="../../../../css/style.css" media="screen" />
+        <link href="../../../../css/prism.css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../../../js/jquery-1.js"></script>
+        <meta name="thumbnail" content="images/1.png" />
+    </head>
+    
+    <body>
+	    <div id="mainwrap">
+	        <br>
+	        <header>
+		        
+		        <!--
+		             Feel free to send feedback or suggestions
+		             through PGP contact form or email.
+		        -->
+
+	        </header>
+	        
+	        <div id="mainwrap">
+		        <div id="content-post">
+
+		            <div id="posts" class="section-post">	    
+			            <h2>Ciber Perseu 2020 CTF - "PasteMyShell" Writeup - Forensics</h2>
+			            <hr/>
+                        <p style="text-align: right">
+                            <i>04-12-2020</i>
+                        </p>
+
+                        <center><img src="images/1.png" /><br><i><i>Image credits: Exercito.pt</i></i></center>
+                        
+			            <p><h3>Introduction</h3></p>
+			            <p>
+                            The <a href="https://www.exercito.pt/">Portuguese Army</a> (Exército Português)
+                            performs operational training on cyberdefense every year. This exercice is designated
+                            as "Ciber Perseu" and the 9<sup>th</sup> edition was held in November 2020.
+                            <br>
+                            Besides
+                            the CTF competition, there was also a "cyber range" infrastructure where the Army,
+                            several institutions and companies tested their response capacity while being
+                            attacked under a controlled adversarial simulation environment.
+                        </p>
+                        <p>
+                            Our academic team <a href="https://xstf.pt/">xSTF</a> was invited to participate in
+                            Ciber Perseu CTF to represent the University of Porto. We solved challenges of the
+                            following categories: <i>reverse engineering</i>, <i>steganography</i> & <i>forensics</i>
+                            and finished "2<sup>nd</sup>" 🏆.
+                        </p>
+                        
+                        
+                        <p><h3>Final decision about teams classification (and cheating teams)</h3></p>
+			            <p>
+                            The CTF competition infrastructure was provided by <a href="https://www.ihacklabs.com/">iHackLabs</a>.
+                            <br>
+                            Teams were initally given credentials to login to the platform and (supposed to be)
+                            limited to 4 elements.
+                        </p>
+                        <p>
+                            Each challenge had a set of 3 hints that could be unlocked. However, by unlocking
+                            hints, the maximum score of the challenge would decrease if solved (-20%, -40% and -60%
+                            respectively for each unlocked hint). Also, taking too long to solve a challenge would
+                            result in score penalization.
+                        </p>
+		                <p>
+                            In the last day of the Ciber Perseu 2020 CTF, the "PasteMyShell" challenge
+                            (difficulty: hard) was released and remained unsolved for almost the entire
+                            day, except when two teams submitted the same solution with <b>a difference
+                            of 5 minutes</b>.
+                        </p>
+                        
+                        <center><img src="images/romania_cheating_team.png" /></center>
+                        <br>
+
+                        <p>
+                            These two cheating teams belong to <a href="http://www.mapn.ro">
+                            "Romania Ministry of National Defence" (Ministerul Apararii Nationale)</a>
+                            (source: <a href="https://www.exercito.pt/pt/informa%C3%A7%C3%A3o-p%C3%BAblica/not%C3%ADcias/2204">Exército</a>).
+                        </p>
+                        
+                        <p>
+                            What we should consider:
+                            <ol>
+                                <li>Both teams have similar names: "Royal_Cellar1" and "Royal_Cellar2"</li>
+                                <li>The score difference of submitted solutions:
+                                    <ol>
+                                        <li>"Royal_Cellar2" submitted the solution at <b>16h40</b> and scored <b>186 points</b>.</li>
+                                        <li>"Royal_Cellar1" submitted the solution at <b>16h45</b> (5 minutes after) and scored
+                                            <b>465 points</b>.</li>
+                                    </ol>
+                                </li>
+                            </ol>
+                        </p>
+                        <p>
+                            Obviously, both teams collaborated to solve this challenge (and certainly the other challenges too)
+                            by breaking the rules.
+                            <br>
+                            The inconsistency
+                            of score also reveled that "Royal_Cellar2" unlocked ALL the hints for this challenge (-60% of total score)
+                            and shared the hints with "Royal_Cellar1" (whose score wasn't affected because they re-used hints, hence,
+                            the 465 points vs 186 points).
+                        </p>
+                        <p>
+                            In resume, the secondary team "Royal_Cellar2" was used to unlock hints and provide them to the
+                            main account "Royal_Cellar1" in order to climb/smurf.
+                        </p>
+                        <p>
+                            Our team immediately reported this to the CiberPerseu organization and iHackLabs but we just got answered
+                            way after the CTF ended.
+                        </p>
+                        
+                        <center><img height="500" src="images/2.png" /></center>
+                        <br>
+                        
+                        <p>
+                            We still don't understand why CiberPerseu organization did not disqualify both teams for playing unfair.
+                            They broke several rules, including:
+                            <ol>
+                                <li>Team of 8 members (other teams were limited to max. 4)</li>
+                                <li>Sharing hints</li>
+                                <li>Helped each other (climbing/smurfing)</li>
+                            </ol>
+                        </p>
+                        <p>
+                            We also don't know if they cheated on other challenges too because the iHackLabs plaform hid
+                            the score table at the end of each day. Both CiberPerseu organization and iHackLabs <b>refused</b>
+                            to provide logs or relevant information to the rest of participants regarding this occurrence.
+                        </p>
+                        <p>
+                            Our team respected the final decision, even though we don't consider it was the correct one
+                            (especially because there were prizes for Top3 winners). Not only us (xSTF) but also the rest
+                            of participant teams were in disadvantage against the two cheating teams.
+                        </p>
+                        <p>
+                            We hope that next year Portuguese Army, CiberPerseu organization change their posture and start
+                            enforcing the rules for everybody during the CTF competition in order to achieve a better
+                            quality training and <b>fair</b> classifications.
+                        </p>
+                        <p>
+                            In general, the CTF challenges were fine, but honestly (in my opinion) I was expecting much more
+                            considering it was the Army cyber defense exercise. I believe there's a lot to improve in the context
+                            of Portuguese national cyber defense.
+                        </p>
+                        
+
+
+                        
+                        <p><h3>The challenge</h3></p>
+                        <p>
+                            Our team solved this challenge during the CiberPerseu Closing Cerimony but could not submit the
+                            flag because the platform was already closed. We did not unlock hints or use secondary accounts.
+                        </p>
+                        <p>
+                            We were given a <code-line>.pcap</code-line> network capture file. (Download:
+                            <a href="files/pastemyshell.pcapng">pastemyshell.pcapng</a>)
+                            <br>
+                            Opening it in Wireshark reveals a lot of SMB traffic. We immediately knew it was some kind
+                            of file transfer.
+                        </p>
+
+                        <center><img height="350" src="images/3.png" /></center>
+                        <br>
+
+                        <p>
+                            We tried to extract objects from the pcap file without success. Uploading the file
+                            to VirusTotal (<a href="https://www.virustotal.com/gui/file/4d59655077b58105f828f38a650dc8a25c0d26cb11c3d953c24c5dc668a18705/details">4d59655077b58105f828f38a650dc8a25c0d26cb11c3d953c24c5dc668a18705</a>), the Snort & Suricata analysis identified possible
+                            EternalBlue/DoublePulsar exploitation.
+                        </p>
+
+                        <center><img height="400" src="images/4.png" /></center>
+                        <br>
+
+
+                        <p>
+                            After researching a bit, we found this interesting post:
+                            <a href="https://www.hackers-arise.com/post/2018/11/30/network-forensics-part-2-packet-level-analysis-of-the-eternalblue-exploit">
+                                "Network Forensics: Packet-level analysis of NSA EternalBlue exploit"</a>.
+                            <br>
+                            The pcap contents matched the request/response and the signature of successful payload installation
+                            as seen in the previous article. At this point we knew the pcap was a capture of SMB EternalBlue exploitation.
+                        </p>
+                        <p>
+                            However we had trouble recovering the payload and lost <i>a lot</i> of time trying to decrypt it
+                            (it was a guessy challenge because we only had the pcap without any executable binary in hands to
+                            examine).
+                        </p>
+                        <p>
+                            We found out later that it was encrypted using a 4-byte XOR and could be decrypted
+                            using a tool made by F-Secure Countercept:
+                            <a href="https://github.com/countercept/doublepulsar-c2-traffic-decryptor/">
+                                doublepulsar-c2-traffic-decryptor</a>.
+                            <br>
+                            After running the tool, we extracted a <code-line>Windows PE32 Executable DLL</code-line> and
+                            opened it in a decompiler.
+                        </p>
+
+                        <center><img height="350" src="images/5.png" ></center>
+                        <br>
+
+                        <p>
+                            The shellcode was encoded (probably with shikata_ga_nai encoder) and we could not decode it properly.
+                            Our last resort was to change computer name to start with 'M' and execute the DLL. This procedure
+                            was performed in a Windows 7 virtual machine snapshot.
+                        </p>
+                        <p>
+                            To execute the DLL we ran the following command: <code-line>rundll32.exe extracted.dll,DllMain</code-line>.
+                            <br>
+                            A PowerShell window popped up for half a second and then a text tile <code-line>flag.txt</code-line> was created
+                            in the same directory containing the flag: <code-line>flag{D0uBl3Pulsar_R0cks}</code-line>.
+                        </p>
+                        <center><img src="images/6.png" /></center>
+
+                        <p><h3>References</h3></p>
+                        <ol>
+                            <li><a href="https://www.hackers-arise.com/post/2018/11/30/network-forensics-part-2-packet-level-analysis-of-the-eternalblue-exploit">
+                                https://www.hackers-arise.com/post/2018/11/30/network-forensics-part-2-packet-level-analysis-of-the-eternalblue-exploit</a></li>
+                            <li><a href="https://www.microsoft.com/security/blog/2017/06/30/exploring-the-crypt-analysis-of-the-wannacrypt-ransomware-smb-exploit-propagation/">
+                                https://www.microsoft.com/security/blog/2017/06/30/exploring-the-crypt-analysis-of-the-wannacrypt-ransomware-smb-exploit-propagation/</a></li>
+                            <li><a href="https://github.com/countercept/doublepulsar-c2-traffic-decryptor">https://github.com/countercept/doublepulsar-c2-traffic-decryptor</a></li>
+                            <li><a href="https://isc.sans.edu/forums/diary/Detecting+SMB+Covert+Channel+Double+Pulsar/22312/">
+                                https://isc.sans.edu/forums/diary/Detecting+SMB+Covert+Channel+Double+Pulsar/22312/</a></li>
+                            
+                        </ol>
+                        
+			            <p style="margin-top: 5%;"><center><a href="/">← Go Back</a></center></p>
+			            
+		            </div>
+		            
+		        </div>
+		        
+	        </div>
+
+	        <div id="footer">
+		        · Original design by <a href="https://andreasviklund.com/" target="_blank">Andreas Viklund</a> ·
+	        </div>
+	        
+	        
+	    </div>
+
+        <!-- Syntax Highlighting -->
+        <script src="../../../../js/prism.js"></script>
+        
+	    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-156800674-1"></script>
+	    <script>
+	     window.dataLayer = window.dataLayer || [];
+	     function gtag(){dataLayer.push(arguments);}
+	     gtag('js', new Date());
+	     gtag('config', 'UA-156800674-1');
+	    </script>
+
+    </body>
+
+</html>
+
+

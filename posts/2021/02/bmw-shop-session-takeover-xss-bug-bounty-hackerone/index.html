@@ -1,0 +1,235 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    
+    <head>
+        <title>Bug Bounty - Session Takeover in BMW Shops via XSS - HackerOne</title>
+	    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+	    <link type="text/css" rel="stylesheet" href="../../../../css/RobotoCondensed.css" />
+	 	<link type="text/css" rel="stylesheet" href="../../../../css/style.css" media="screen" />
+        <link href="../../../../css/prism.css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../../../js/jquery-1.js"></script>
+        <meta name="thumbnail" content="images/bmwgroup_hackerone.jpeg" />
+    </head>
+    
+    <body>
+	    <div id="mainwrap">
+	        <br/>
+	        <header>
+		        
+		        <!--
+		             Feel free to send feedback or suggestions
+		             through PGP contact form or email.
+		        -->
+
+	        </header>
+	        
+	        <div id="mainwrap">
+		        <div id="content-post">
+
+		            <div id="posts" class="section-post">
+
+			            <h2>Bug Bounty - Session Takeover in BMW Shops via XSS - HackerOne</h2>
+			            <hr/>
+                        <p style="text-align: right">
+                            <i>28-02-2021</i>
+                        </p>
+
+                        <center>
+                            <img src="images/bmwgroup_hackerone.jpeg" width="250">
+                            <br>
+                            <i>Credits: hackerone.com/bmwgroup</i>
+                        </center>
+                        
+                        
+			            <p><h3>Introduction</h3></p>
+			            <p>
+			                Back in April 2020 I found a bug in BMW online shop (actually, the bug
+                            affected all of their shops) and reported through HackerOne bug bounty program.
+                            <br>
+                            The report was almost instantly closed as informative since <code-line>shop.bmw.de</code-line>
+                            wasn't on the scope, which I found really odd, as the shops usually deal with user's sensitive
+                            information, personal details, payment information, and so on.
+                        </p>
+                        <p>
+                            Since then, the security issue was fixed, but I haven't got any reply confirming the fix
+                            from HackerOne staff or BMW itself whatsoever nor a request to re-test the exploit.
+                        </p>
+                        <p>
+                            Also worth to mention that I wasn't even added to their "Hall of Fame" published at
+                            <a href="https://www.bmwgroup.com/en/general/Security.html">
+                                https://www.bmwgroup.com/en/general/Security.html</a>.
+                        </p>
+
+                        
+                        <p><h3>Vulnerability</h3></p>
+                        <p>
+                            Most of BMW shops run on <code-line>Intershop E-Commerce</code-line>
+                            platform. I've contacted the Intershop security
+                            team regarding this issue but they confirmed that the application core didn't include that specific
+                            component.
+                        </p>
+                        <p>
+                            <i>Moral of the story</i>: BMW developers included custom modules/components into the core web application,
+                            thus violating the integrity of Intershop instance and leading to security issues due
+                            to lack of testing.
+                        </p>
+                        <p>
+                            The issue affected, at least, the following shop instances:
+                            <ol>
+                                <li>shop.bmw.de</li>
+                                <li>shop.mini.de</li>
+                                <li>shop.bmw-motorrad.de</li>
+                                <li>shop.bmw-classic.de</li>
+                            </ol>
+                        </p>
+                        <p>
+                            The vulnerability was a cross-site scripting through a custom display message in the
+                            <code-line>NewLogin</code-line> parameter:
+                        </p>
+                        <p>
+                            <code-line>/ViewAjax-Start?LayerTarget=ViewProfileSettings-DisplayUpdatedLoginInfoLayer&NewLogin=[PAYLOAD]</code-line>
+                        </p>
+                        <p>
+                            When injected, the text at that particular parameter would be displayed while rendering the webpage,
+                            allowing, for example, HTML <code-line>&lt;script&gt;</code-line> tags.
+                        </p>
+
+                        <p>
+                            Since the XSS would be triggered in the context of a logged-in user, I decided to explore a little bit
+                            further.
+                        </p>
+                        <p>
+                            At the beginning I tried to perform requests on behalf of victim's user to force the
+                            change of current email address, as that would certainly lead to a full account takeover, by
+                            modifying the current victim's email to another address controlled by an attacker. However
+                            it was not possible due to requirement of current password.
+                        </p>
+
+                        <p>
+                            <center><img src="images/1.png" width="450"></center>
+                        </p>
+                        <p>
+                            Also, to perform other actions, the HTTP requests included a <code-line>synchronizer</code-line> token,
+                            which I believe to be some kind of mechanism to protect against CSRF attacks
+                            (see: <a href="https://owasp.org/www-community/attacks/csrf">OWASP - Cross-Site Request Forgery</a>). 
+                        </p>
+
+                        <p>
+                            So I began to develop a simple PoC in JavaScript. In resume it would have 2 stages:
+                            <ol>
+                                <li>1 - Grab <code-line>synchronizer</code-line> token from the victim's session context</li>
+                                <li>2 - Use that token to hijack their session and send arbitrary HTTP requests to perform actions
+                                    within the shop</li>
+                            </ol>
+                        </p>
+
+                        <p>
+                            The exploit leveraged <code-line>XMLHttpRequest</code-line> API to make arbitrary requests.
+                            In order to grab the token, the script parsed page contents and matched the occurrence of
+                            <code-line>SYNCHRONIZER_TOKEN_VALUE</code-line>:
+
+                            <center><pre><code class="language-javascript">token = http.responseText.split("SYNCHRONIZER_TOKEN_VALUE = '")[1].split("'")[0];</code></pre></center>
+                        </p>
+
+                        <p>
+                            At this moment, we have control over the victim's session and are able to read/edit their personal
+                            information, view the purchase history, payment methods, etc.
+                        </p>
+                        <p>
+                            If BMW shops saved the payment information for quicker purchases in the future,
+                            it would be really easy to modify the shipping address and place arbitrary
+                            orders, in an automated fashion.
+                        </p>
+                        <p>
+                            In other words, that would allow a malicious hacker
+                            to buy BMW products and ship them to his desired address on behalf of victim's account.
+                        </p>
+
+                        <p>
+                            The web server also lack important security headers & policies (thus enabling this type of
+                            attacks), and the accounts are, in some way,
+                            synchronized with MyBMW service, but thats <i>out-of-scope</i> for this post.
+                        </p>
+
+                        <p><h3>Demo Video (Proof-of-Concept)</h3></p>
+                        <p><center>
+                            <video width="850" height="450" controls>
+                                <source src="media/bmw_shop_poc_1.mp4" type="video/mp4">
+                            </video>
+                        </center>
+                        </p>
+
+                        <p><h3>Conclusion</h3></p>
+                        <p>
+                            At this moment I confirm the vulnerability is fixed, however, <i>still</i> no answer from the developers
+                            or HackerOne staff. Kind of disappointed with the way my report was managed at the bug bounty platform.
+                        </p>
+                        <p>
+                            In my perspective, this security issue could have lead to the exposure of sensitive user's information
+                            aswell as partial takeover of their accounts, due to the easiness of exploitation.
+                        </p>
+                        <p>
+                            Maybe my report wasn't clear enough. There was lack of communication when explaining the
+                            security impact this vulnerability could have. The feedback would be important to
+                            understand what could be improved.
+                        </p>
+                        <p>
+                            Either way, I'm happy that the issue is already fixed and to have contributed to BMW security :)
+                        </p>
+
+                        <p><h3>Timeline</h3></p>
+                        <p>
+                            <ol>
+                                <li>2020-04: Issue reported to bug bounty program (hackerone.com/bmwgroup)</li>
+                                <li>2020-04: Issue reported to web application vendor (intershop.de)</li>
+                                <li>2020-05: HackerOne report closed by staff</li>
+                                <li>2020-07: Intershop confirmed the issue didn't affect the core product (only BMW instances)</li>
+                                <li>????-??: Vulnerability was fixed</li>
+                                <li>2021-02: Public disclosure (as Last Resort according to h1 Disclosure Guidelines)</li>
+                            </ol>
+                        </p>
+                        
+                        <p><h3>References</h3></p>
+                        <ol>
+                            <li><a href="https://labs.f-secure.com/blog/getting-real-with-xss/">
+                                https://labs.f-secure.com/blog/getting-real-with-xss/</a></li>
+                            <li><a href="https://blog.0daylabs.com/2014/11/01/xss-ex-filtrating-data-xmlhttprequest-js-pentesters-task-15-write/">
+                                https://blog.0daylabs.com/2014/11/01/xss-ex-filtrating-data-xmlhttprequest-js-pentesters</a>
+                            </li>
+                            <li><a href="https://owasp.org/www-community/attacks/csrf">
+                                https://owasp.org/www-community/attacks/csrf</a></li>
+                                
+                        </ol>
+                        
+                        
+			            <p style="margin-top: 5%;"><center><a href="/">← Go Back</a></center></p>
+			            
+		            </div>
+		            
+		        </div>
+		        
+	        </div>
+
+	        <div id="footer">
+		        · Original design by <a href="https://andreasviklund.com/" target="_blank">Andreas Viklund</a> ·
+	        </div>
+	        
+	        
+	    </div>
+
+        <!-- Syntax Highlighting -->
+        <script src="../../../../js/prism.js"></script>
+        
+	    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-156800674-1"></script>
+	    <script>
+	     window.dataLayer = window.dataLayer || [];
+	     function gtag(){dataLayer.push(arguments);}
+	     gtag('js', new Date());
+	     gtag('config', 'UA-156800674-1');
+	    </script>
+
+    </body>
+
+</html>
+
+
