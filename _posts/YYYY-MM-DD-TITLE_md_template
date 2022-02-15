@@ -1,0 +1,11 @@
+---
+title: TITLE
+date: YYYY-MM-DD
+#categories: [TOP_CATEGORIE, SUB_CATEGORIE]
+tags: [TAG]
+image: /assets/img/posts/YYYY/MM/MD5SUMHASH.png #og:image
+#image:
+#  src: /assets/img/posts/YYYY/MM/MD5SUMHASH.png
+#  width: 350   # in pixels
+#  height: 350   # in pixels
+---
