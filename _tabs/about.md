@@ -11,14 +11,14 @@ order: 1
 
 ![image]({{ site.baseurl }}/assets/img/photo.png)
 
-* Computer Science student at University of Porto
-* Interested in modifying and controlling computer behavior
-* Hacking multiple capture-the-flag challenges and attending security events together with team [xSTF](https://xstf.pt) both local and remote
+* Interest in exploring and modifying computer behavior
+* Playing CTF challenges and attending security events together with team [xSTF](https://xstf.pt)
+* BSc in Computer Science (University of Porto)
 {: style="color:gray; font-size: 100%; max-width: 80%;"}
 
 
 | **Name**             | 	João Varelas             |
 | **Location**         | 	Porto, Portugal          |
 | **Languages**        | 	Python, C/C++, Java, PHP |
-| **Operating System** | 	Debian 10                |
+| **Operating System** | 	Debian 11                |
 | **Email**            | 	varelas@pm.me            |
