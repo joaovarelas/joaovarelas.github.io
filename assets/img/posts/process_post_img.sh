@@ -1,4 +1,4 @@
 #!/bin/bash
 
 exiftool -all= -overwrite_original .
-for i in *; do sum=$(echo -n "$i"|md5sum); echo -- "$i" "${sum%% *}.${i##*.}"; mv "$i" "${sum%% *}.${i##*.}"; done
+for i in $1; do sum=$(sha256sum $1); echo -- "$i" "${sum%% *}.${i##*.}"; mv "$i" "${sum%% *}.${i##*.}"; done
