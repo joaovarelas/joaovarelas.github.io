@@ -405,9 +405,9 @@ hello world
 ![image](/assets/img/posts/2023/06/193e39469268f5ea6ebd2b75c497908bca93d129536a1db12b5d88bc855686cf.png)
 
 
-Resuling disassembly is now much harder to follow and requires additional attention when reversing this program. The simple "hello world" is now obfuscated and difficult to understand.
+Resulting disassembly is now much harder to follow and requires additional attention when reversing this program. The simple "hello world" is now obfuscated and difficult to understand.
 
-Example of `main` function of program compiled with default settings (debug info) VS. OLLVM & stripped:
+Example of `main` function of program compiled with default settings (debug info) VS. OLLVM stripped:
 
 ![image](/assets/img/posts/2023/06/a48f3490ef737d356ee912bdbb374c2f4df7d02c1c9bed940882e7827b0add4d.png)
 
