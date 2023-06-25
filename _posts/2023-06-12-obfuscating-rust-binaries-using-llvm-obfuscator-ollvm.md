@@ -123,7 +123,7 @@ Given that Rust uses LLVM to generate MIR and LLVM-IR [[4]](#references), its po
 
 Note that original OLLVM project [[3]](#references) is quite old and the latest version was built on top of LLVM 4.0 released more than 6 years ago. Currently the Rust-fork of LLVM is on version 16.0.2.
 
-OLLVM forks may be found on open-source code repositories such as [[5]](#references) [[6]](#references) [[7]](#references) [[8]](#references). Interestingly enough, this project seems very common among chinese developers including native mobile apps developers and reverse engineers. Most of the custom passes found online have documentation in chinese language.
+OLLVM forks may be found on open-source code repositories such as [[5, 6, 7 ,8]](#references). Interestingly enough, this project seems very common among chinese developers including native mobile apps developers and reverse engineers. Most of the custom passes found online have documentation in chinese language.
 
 Additionaly OLLVM was referenced in game hacking communities used by players to protect their cheats and evade anti-cheat systems thus avoiding being banned from the game. For example, in `Unknown-Cheats` forum there is a guide [[9]](#references) on how to integrate OLLVM with Microsoft Visual Studio to aid cheat development and protection.
 
