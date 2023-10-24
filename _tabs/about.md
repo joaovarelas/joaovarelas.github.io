@@ -17,8 +17,8 @@ order: 1
 {: style="color:gray; font-size: 100%; max-width: 80%;"}
 
 
-| **Name**             | 	João Varelas             |
-| **Location**         | 	Porto, Portugal          |
-| **Languages**        | 	Python, C/C++, Java, PHP |
-| **Operating System** | 	Debian 11                |
-| **Email**            | 	varelas@pm.me            |
+| **Name**             | 	João Varelas               |
+| **Location**         | 	Porto, Portugal            |
+| **Languages**        | 	Python, C/C++, Java, Rust  |
+| **Operating System** | 	Debian 11                  |
+| **Email**            | 	joaomvarelas@gmail.com     |

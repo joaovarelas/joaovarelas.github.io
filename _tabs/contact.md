@@ -9,7 +9,7 @@ order: 2
  -->
 
 
-* **Email:** varelas@pm.me
+* **Email:** joaomvarelas@gmail.com
 * **Academic:** jvarelas@fc.up.pt
 
 
