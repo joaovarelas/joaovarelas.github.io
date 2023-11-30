@@ -13,6 +13,28 @@ image: /assets/img/posts/2023/06/bbd2d694438b7b8d063e372b3495b2616e0c812a90a0d69
 ![image](/assets/img/posts/2023/06/bbd2d694438b7b8d063e372b3495b2616e0c812a90a0d6980c2f4b4c3d9e8cb9.png)
 
 
+
+## **UPDATE - 30 November 2023**
+
+I have made available a Docker image containing all the required steps to build a Rust toolchain using OLLVM. Currently it is targeting both `x86_64-unknown-linux-gnu` and `x86_64-pc-windows-gnu` but haven't tested yet. At least it works for "hello world" programs.
+
+NOTE: You are going to need at least **30GB** of disk space and patience to compile LLVM 16.
+
+
+1. `git clone https://github.com/joaovarelas/Obfuscator-LLVM-16.0 && cd Obfuscator-LLVM-16.0`
+2. `docker build -t rustc-ollvm .`
+3. `docker run -v /path/to/my/cargo/projects:/projects/ -it rustc-ollvm:latest /bin/bash`
+
+Then inside the container:
+
+4. `cd /projects/myproject/`
+5. `RUSTCFLAGS="-Cllvm-args=-enable-allobf" cargo +ollvm-rust-1.70.0 build --release`
+
+The executables will be placed at `target/`.
+
+Credits to original author [https://bbs.kanxue.com/thread-274453.htm](https://bbs.kanxue.com/thread-274453.htm).
+
+
 ## Introduction
 
 
