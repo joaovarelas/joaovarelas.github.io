@@ -18,6 +18,8 @@ image: /assets/img/posts/2023/06/bbd2d694438b7b8d063e372b3495b2616e0c812a90a0d69
 
 I have made available a Docker image containing all the required steps to build a Rust toolchain using OLLVM. Currently it is targeting both `x86_64-unknown-linux-gnu` and `x86_64-pc-windows-gnu` but haven't tested yet. At least it works for "hello world" programs.
 
+Source: [https://github.com/joaovarelas/Obfuscator-LLVM-16.0](https://github.com/joaovarelas/Obfuscator-LLVM-16.0)
+
 NOTE: You are going to need at least **30GB** of disk space and patience to compile LLVM 16.
 
 
