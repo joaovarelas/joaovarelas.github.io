@@ -4,6 +4,7 @@
 !.editorconfig
 !.nojekyll
 !.travis.yml
+_posts/tmp/
 
 # bundler cache
 _site
