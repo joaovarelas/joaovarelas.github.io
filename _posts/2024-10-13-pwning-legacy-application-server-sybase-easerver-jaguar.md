@@ -10,7 +10,16 @@ image: /assets/img/posts/2024/10/792da430bf99d31d4b93284495c622ce06fcc20a70283a4
 #  height: 350   # in pixels  
 ---
 
-![image](/assets/img/posts/2024/10/792da430bf99d31d4b93284495c622ce06fcc20a70283a4f30d2f96da72fd697.png)
+<meta name="twitter:card" content="summary_large_image">
+<meta property="twitter:domain" content="vrls.ws">
+<meta property="twitter:url" content="https://vrls.ws/posts/2024/10/pwning-legacy-application-server-sybase-easerver-jaguar/">
+<meta name="twitter:title" content="Pwning a Legacy Enterprise Application Server - Sybase EAServer">
+<meta name="twitter:description" content="Personal blog about computer hacking & security">
+<meta name="twitter:image" content="https://vrls.ws/assets/img/posts/2024/10/792da430bf99d31d4b93284495c622ce06fcc20a70283a4f30d2f96da72fd697.png">
+
+
+
+![image](/assets/img/posts/2024/10/0a5140b191f5a32ab25d03900a1d6b3122881205dccda363b45e6ed82385c2e0.png)
 
 ## Introduction
 
