@@ -198,9 +198,13 @@ public String load()  {
 
 ## Usage Demo
 
+
+<!--
 <video width="100%" controls>
   <source src="/assets/img/posts/2022/08/f44fd83bac8c92485dbabd8c1f654d173a953589.mp4" type="video/mp4" />
 </video>
+
+-->
 
 
 Soundtrack by [The Algorithm](https://thealgorithm.bandcamp.com/).
