@@ -33,6 +33,24 @@ The goal of this article is to illustrate the process of a red team engagement a
 We have created labs to replicate target environment as much as possible and perform intrusive testing isolated from real systems avoiding severe consequences or causing unexpected behavior in production. All findings described in this article were responsibly disclosed to affected organizations, and remediation measures have been implemented to address vulnerabilities discovered during this engagement.
 
 
+
+# Key Takeaways
+
+Our red team assessment revealed security gaps where corporate network compromises created bridges to industrial control systems, demonstrating how modern attack vectors can bypass traditional IT/OT boundaries:
+
+- Critical infrastructure remains vulnerable through multi-stage attack chains that connect corporate and industrial networks
+
+- Seemingly minor misconfigurations in corporate networks (like default or misconfigured Active Directory settings) can ultimately provide pathways to reach critical OT systems
+
+- Even security-focused industrial applications can be undermined through reverse engineering, weak privileged access and credential management
+
+- The convergence of IT and OT networks creates significant security blind spots that determined attackers can exploit
+
+- Effective protection requires a unified security approach spanning both corporate and industrial environments
+
+- Following vendor security advisories and implementing manufacturer cybersecurity guidance is essential - outdated industrial control systems contain documented vulnerabilities that attackers specifically target
+
+
 # Part 0x01 - Escalating Privileges in Corporate Active Directory
 
 ## Initial Access - Assumed Breach Scenario
