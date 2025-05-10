@@ -17,6 +17,8 @@ During this post, we will be looking into the PIN authentication mechanism and t
 In addition, the project is licensed under the [GNU General Public License v3.0](https://code.samourai.io/wallet/samourai-wallet-android/-/blob/develop/LICENSE). 
 
 
+- CVE-2021-36689 [https://nvd.nist.gov/vuln/detail/CVE-2021-36689](https://nvd.nist.gov/vuln/detail/CVE-2021-36689)
+
 ## Motivation
 
 When I was testing the application and created a Bitcoin wallet, I noticed that a new seed (BIP39 12-word mnemonic) was generated together with a custom passphrase. Besides that, a PIN was chosen to unlock the wallet. The PIN is a number in the range of 5 to 8 digits.
