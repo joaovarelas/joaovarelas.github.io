@@ -4,6 +4,8 @@ author: vrls
 date: 2021-02-28
 #categories: [TOP_CATEGORIE, SUB_CATEGORIE]
 tags: [bug, bounty, hackerone, h1, bmw, bmwgroup, web, shop, session, takeover, xss, cross site scripting, wayback]
+permalink: /posts/2021/02/bug-bounty-hackerone-bmw-group-shop-session-hijack-xss/
+
 ---
 
 ## Description

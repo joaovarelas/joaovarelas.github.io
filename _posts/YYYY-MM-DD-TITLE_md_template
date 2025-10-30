@@ -8,6 +8,7 @@ image: /assets/img/posts/YYYY/MM/MD5SUMHASH.png #og:image
 #  src: /assets/img/posts/YYYY/MM/MD5SUMHASH.png
 #  width: 350   # in pixels
 #  height: 350   # in pixels
+#permalink: /posts/YYYY/MM/title/  # compatiblity old post links
 ---
 
 

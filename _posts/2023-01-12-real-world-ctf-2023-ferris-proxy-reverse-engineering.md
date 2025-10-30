@@ -5,6 +5,7 @@ date: 2023-01-12
 #categories: [TOP_CATEGORIE, SUB_CATEGORIE]
 tags: [realworld, ctf, ferrisproxy, reverse, engineering, pcap, network analysis, cryptography, key, exchange]
 image: /assets/img/posts/2023/01/ca187954bd4476ae0dd959125aec489df2875892fd1278142265b4a793631599.png #og:image
+permalink: /posts/2023/01/real-world-ctf-2023-ferris-proxy-reverse-engineering/
 #image:
 #  src: /assets/img/posts/YYYY/MM/MD5SUMHASH.png
 #  width: 350   # in pixels

@@ -5,6 +5,8 @@ date: 2020-12-04
 #categories: [TOP_CATEGORIE, SUB_CATEGORIE]
 tags: [ciberperseu, ctf, exercito, pastemyshell, writeup, forensics, network, analysis, shellcode, doublepulsar, wannacrypt, romania, cheaters, royal_cellar]
 image: /assets/img/posts/2020/12/4a47a0db6e60853dedfcfdf08a5ca249.png
+permalink: /posts/2020/12/ciberperseu-2020-pastemyshell-writeup-forensics-network-reverse/
+
 
 ---
 

@@ -5,6 +5,7 @@ date: 2024-10-13
 #categories: [TOP_CATEGORIE, SUB_CATEGORIE]  
 tags: [web, sybase, easerver, sap, webshell, jsp, java, pivoting, regeorg, neoregeorg, offensive, security, cybersecurity]  
 image: /assets/img/posts/2024/10/0a5140b191f5a32ab25d03900a1d6b3122881205dccda363b45e6ed82385c2e0.png #og:image  
+permalink: /posts/2024/10/pwning-legacy-application-server-sybase-easerver-jaguar/
 #image:  
 #  src: /assets/img/posts/YYYY/MM/MD5SUMHASH.png  
 #  width: 350   # in pixels  

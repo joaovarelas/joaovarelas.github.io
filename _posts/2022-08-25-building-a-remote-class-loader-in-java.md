@@ -4,6 +4,8 @@ author: vrls
 date: 2022-08-25
 tags: [java, remote, class, loader, classloader, c2, c&c, antivirus, edr, evasion, socket, network, encryption, chacha20, persistence, programming, development, reflection, api, pentest, tool, tooling, red team]
 image: /assets/img/posts/2022/08/cb350880cb958301f950327f10128471059a1fe3.png
+permalink: /posts/2022/08/building-a-remote-class-loader-in-java/
+
 ---
 
 <!-- ![image](/assets/img/posts/2022/08/cb350880cb958301f950327f10128471059a1fe3.png) -->

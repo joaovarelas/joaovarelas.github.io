@@ -5,9 +5,11 @@ date: 2021-08-04
 #categories: [TOP_CATEGORIE, SUB_CATEGORIE]
 tags: [reverse, application, apk, android, bitcoin, samourai, wallet, pin, bypass, authentication, security, vulnerability]
 image: /assets/img/posts/2021/08/e39c5fa919fab8ecaff3daf62ff63080.png
+permalink: /posts/2021/08/samourai-wallet-bitcoin-pin-authentication-bypass-crypto/
+
 ---
 
-![image](/assets/img/posts/2021/08/e39c5fa919fab8ecaff3daf62ff63080.png)
+<!-- ![image](/assets/img/posts/2021/08/e39c5fa919fab8ecaff3daf62ff63080.png) -->
 
 ## Introduction
 

@@ -5,6 +5,8 @@ date: 2021-11-17
 #categories: [TOP_CATEGORIE, SUB_CATEGORIE]
 tags: [hooking, jit, just in time, compiler, vmt, vtable, dotnet, .net, patching, obfuscation, decompile, reversing, reverse engineering, ctf]
 image: /assets/img/posts/2021/11/dcf5eaa06f7d028abebcce147a0faba0.png #og:image
+permalink: /posts/2021/11/hooking-jit-compiler-dotnet-applications/
+
 #image:
 #  src: /assets/img/posts/YYYY/MM/MD5SUMHASH.png
 #  width: 350   # in pixels

@@ -5,6 +5,7 @@ date: 2023-06-12
 #categories: [TOP_CATEGORIE, SUB_CATEGORIE]
 tags: [rust, obfuscation, llvm, ollvm, rustc, compiler, toolchain, reverse, engineering, reversing, protection, security]
 image: /assets/img/posts/2023/06/bbd2d694438b7b8d063e372b3495b2616e0c812a90a0d6980c2f4b4c3d9e8cb9.png #og:image
+permalink: /posts/2023/06/obfuscating-rust-binaries-using-llvm-obfuscator-ollvm/
 #image:
 #  src: /assets/img/posts/YYYY/MM/MD5SUMHASH.png
 #  width: 350   # in pixels

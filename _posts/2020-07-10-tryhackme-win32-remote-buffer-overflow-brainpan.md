@@ -5,6 +5,8 @@ date: 2020-07-10
 #categories: [TOP_CATEGORIE, SUB_CATEGORIE]
 tags: [tryhackme, ctf, win32, buffer, overflow, brainpan]
 image: /assets/img/posts/2020/07/036945e91901ed7a9140b3a4bce1d7a4.png
+permalink: /posts/2020/07/tryhackme-win32-remote-buffer-overflow-brainpan/
+
 ---
 
 <!--  ![image](/assets/img/posts/2020/07/036945e91901ed7a9140b3a4bce1d7a4.png) -->

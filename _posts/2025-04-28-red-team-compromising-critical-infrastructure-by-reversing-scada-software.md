@@ -5,6 +5,8 @@ date: 2025-04-28
 #categories: [TOP_CATEGORIE, SUB_CATEGORIE]
 tags: [red, team, critical, infrastructure, scada, hmi, reversing, reverse engineering, cybersecurity, security, ics]
 image: /assets/img/posts/2025/04/2bee007c2a61db5114247dd60d0d7bb86944183fc8f827385468b848a1f35a88.jpeg #og:image
+permalink: /posts/2025/04/red-team-compromising-critical-infrastructure-by-reversing-scada-software/
+
 #image:
 #  src: /assets/img/posts/YYYY/MM/MD5SUMHASH.png
 #  width: 350   # in pixels

@@ -5,6 +5,8 @@ date: 2020-06-24
 #categories: [TOP_CATEGORIE, SUB_CATEGORIE]
 tags: [bug, bounty, hackerone, h1, alibaba, group, web, shop, idor, api, authorization]
 image: /assets/img/posts/2020/06/d10c88f869301b1238f53cfdff8e9d7c.png
+permalink: /posts/2020/06/bug-bounty-idor-in-domain-of-alibaba-group-hackerone/
+
 ---
 
 <!--  ![image](/assets/img/posts/2020/06/d10c88f869301b1238f53cfdff8e9d7c.png) -->

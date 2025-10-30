@@ -5,6 +5,8 @@ date: 2020-11-22
 #categories: [TOP_CATEGORIE, SUB_CATEGORIE]
 tags: [dragontctf, dragonsector, ctf, retrozeit, reverse, engineering, challenge, amigaos, workbench, emulator, helloami, fs-uae]
 image: /assets/img/posts/2020/11/4a47a0db6e60853dedfcfdf08a5ca249.png
+permalink: /posts/2020/11/dragonsector-ctf-2020-retrozeit-reverse-engineering/
+
 ---
 
 <!-- ![image](/assets/img/posts/2020/11/4a47a0db6e60853dedfcfdf08a5ca249.png) -->

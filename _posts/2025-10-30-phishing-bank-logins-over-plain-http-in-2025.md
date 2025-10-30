@@ -5,6 +5,7 @@ date: 2025-10-30
 #categories: [TOP_CATEGORIE, SUB_CATEGORIE]
 tags: [web, security, http, https, ssl, tls, phishing, login, credentials, bank, homebanking, password, report, disclosure, transparency, cert, csirt]
 image: /assets/img/posts/2025/10/14cd2d8e32c5f4deb5fec7241d6cf7ce8a987c81c8ab9536bd216fdb961bc33b.png
+#permalink: /posts/2025/10/phishing-bank-logins-over-plain-http-in-2025/
 #image: /assets/img/posts/2025/10/MM/MD5SUMHASH.png #og:image
 #image:
 #  src: /assets/img/posts/YYYY/MM/MD5SUMHASH.png

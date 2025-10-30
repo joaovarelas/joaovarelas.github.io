@@ -5,6 +5,8 @@ date: 2020-04-25
 #categories: [TOP_CATEGORIE, SUB_CATEGORIE]
 tags: [google, backdoor, search, engine, osint, compromised, systems, infected, malware, research, dorks, patterns, web, shells]
 image: /assets/img/posts/2020/04/fe3bcf195ede077dde95b8b908f94350.png
+permalink: /posts/2020/04/backdoor-search-engine/
+
 ---
 
 <!--  ![image](/assets/img/posts/2020/04/fe3bcf195ede077dde95b8b908f94350.png) -->

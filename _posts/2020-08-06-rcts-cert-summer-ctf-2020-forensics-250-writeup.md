@@ -5,6 +5,8 @@ date: 2020-08-06
 #categories: [TOP_CATEGORIE, SUB_CATEGORIE]
 tags: [rcts, cert, ctf, forensics, virtualbox, openbsd, keepass, autopsy, recovery, johntheripper, jtr, cracking, password]
 image: /assets/img/posts/2020/08/c1ea80f406c4e91c7d939630f463daa0.png
+permalink: /posts/2020/08/rcts-cert-summer-ctf-2020-forensics-250-writeup/
+
 ---
 
 <!-- ![image](/assets/img/posts/2020/08/c1ea80f406c4e91c7d939630f463daa0.png) -->
