@@ -1,0 +1,24 @@
+---
+title: TITLE
+date: YYYY-MM-DD
+#categories: [TOP_CATEGORIE, SUB_CATEGORIE]
+tags: [TAG]
+image: /assets/img/posts/YYYY/MM/MD5SUMHASH.png #og:image
+#image:
+#  src: /assets/img/posts/YYYY/MM/MD5SUMHASH.png
+#  width: 350   # in pixels
+#  height: 350   # in pixels
+---
+
+
+<meta name="twitter:card" content="summary_large_image">
+<meta property="twitter:domain" content="vrls.ws">
+<meta property="twitter:url" content="https://vrls.ws/posts/2025/06/XXXXXXXXXXXXXX/">
+<meta name="twitter:title" content="TITLE OF THE POST">
+<meta name="twitter:description" content="Personal blog about computer hacking & security">
+<meta name="twitter:image" content="https://vrls.ws/assets/img/posts/2025/06/MAIN_IMAGE_THUMBNAIL_OF_THE_POST.png">
+
+
+
+<img src="/assets/img/posts/2025/06/MAIN_IMAGE_THUMBNAIL_OF_THE_POST.png" width="550px" height="450px" />
+

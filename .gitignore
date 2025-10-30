@@ -25,3 +25,9 @@ package-lock.json
 # Misc
 _sass/vendors
 assets/js/dist
+
+
+
+# cooking ;)
+_posts/tmp/
+assets/img/posts/tmp/
