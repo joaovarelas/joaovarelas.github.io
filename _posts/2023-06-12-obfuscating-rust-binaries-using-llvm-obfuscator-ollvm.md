@@ -6,6 +6,7 @@ date: 2023-06-12
 tags: [rust, obfuscation, llvm, ollvm, rustc, compiler, toolchain, reverse, engineering, reversing, protection, security]
 image: /assets/img/posts/2023/06/bbd2d694438b7b8d063e372b3495b2616e0c812a90a0d6980c2f4b4c3d9e8cb9.png #og:image
 permalink: /posts/2023/06/obfuscating-rust-binaries-using-llvm-obfuscator-ollvm/
+description: Delve into obfuscation techniques for Rust binaries using LLVM Obfuscator (OLLVM) to enhance code protection against reverse engineering. Key tips on implementation, effectiveness, and trade-offs for developers securing their applications.
 #image:
 #  src: /assets/img/posts/YYYY/MM/MD5SUMHASH.png
 #  width: 350   # in pixels

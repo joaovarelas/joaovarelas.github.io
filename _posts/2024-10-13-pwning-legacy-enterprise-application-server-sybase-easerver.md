@@ -6,6 +6,7 @@ date: 2024-10-13
 tags: [web, sybase, easerver, sap, webshell, jsp, java, pivoting, regeorg, neoregeorg, offensive, security, cybersecurity]  
 image: /assets/img/posts/2024/10/0a5140b191f5a32ab25d03900a1d6b3122881205dccda363b45e6ed82385c2e0.png #og:image  
 permalink: /posts/2024/10/pwning-legacy-application-server-sybase-easerver-jaguar/
+description: Explore exploiting Sybase EAServer vulnerabilities, default jagadmin credentials grant web console access, enabling custom WAR web shell uploads for command execution. Learn pivoting via reGeorg tunneling, RDP connections, and key lessons on hardening legacy systems.
 #image:  
 #  src: /assets/img/posts/YYYY/MM/MD5SUMHASH.png  
 #  width: 350   # in pixels  

@@ -6,7 +6,7 @@ date: 2021-08-04
 tags: [reverse, application, apk, android, bitcoin, samourai, wallet, pin, bypass, authentication, security, vulnerability]
 image: /assets/img/posts/2021/08/e39c5fa919fab8ecaff3daf62ff63080.png
 permalink: /posts/2021/08/samourai-wallet-bitcoin-pin-authentication-bypass-crypto/
-
+description: Analysis of Samourai Wallet's PIN authentication reveals bypass via app restarts, resetting stateless failure counters. Key is GUID + PIN, used in PBKDF2-HMAC-SHA256 (15,000 iterations) for AES-256-CBC decryption of wallet data. Brute-force 111M possible 5-8 digit PINs feasible in ~140 days on basic hardware. Takeaway, Weak auth risks Bitcoin theft on compromised devices.
 ---
 
 <!-- ![image](/assets/img/posts/2021/08/e39c5fa919fab8ecaff3daf62ff63080.png) -->
