@@ -40,7 +40,7 @@ The first thing we tried was to create a new hard drive with the *retrozeit* fil
 After having a look at the file structure of floppy disk files (in particular, ADF files) we decided to create a floppy containing the executable.
 Since we didn't want to start a project from root, we downloaded an open-source "Hello World" version from this GitHub repository ([HelloAmi](https://github.com/nicodex/HelloAmi)).
 
-We managed to hack the Amiga Disk File and replace the executable binary with our own, *retrozeit* in this case, by changing a few lines of code both in .asm files from HelloAmi project and the .py script itself. The Python script is a wrapper for [vasm M68k assembler](http://sun.hasenbraten.de/vasm/).
+We managed to hack the Amiga Disk File and replace the executable binary with our own, *retrozeit* in this case, by changing a few lines of code both in .asm files from HelloAmi project and the .py script itself. The Python script is a wrapper for [vasm M68k assembler](https://sun.hasenbraten.de/vasm/).
 
 After loading the floopy in emulator and executing it, we could wait ad aeternum for the flag to be calculated.
 Our goal is to understand how the calculation is performed so we can get the flag quickly. 
@@ -193,6 +193,6 @@ print("Flag: {}".format(flag))
 
 * https://ctf.dragonsector.pl
 * https://en.wikipedia.org/wiki/Workbench_(AmigaOS)
-* http://68k.hax.com
+* https://68k.hax.com
 * https://fs-uae.net
 * https://github.com/nicodex/HelloAmi

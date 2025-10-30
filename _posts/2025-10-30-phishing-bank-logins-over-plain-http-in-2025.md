@@ -23,7 +23,7 @@ image: /assets/img/posts/2025/10/14cd2d8e32c5f4deb5fec7241d6cf7ce8a987c81c8ab953
 
 
 
- <img src="/assets/img/posts/2025/10/14cd2d8e32c5f4deb5fec7241d6cf7ce8a987c81c8ab9536bd216fdb961bc33b.png" width="550px" height="450px" /> -->
+ <img alt="" src="/assets/img/posts/2025/10/14cd2d8e32c5f4deb5fec7241d6cf7ce8a987c81c8ab9536bd216fdb961bc33b.png" width="550px" height="450px" /> -->
 
 
 
@@ -90,7 +90,7 @@ Given these risks, the use of TLS is not only considered best practice — it is
 The table above shows the results of DNS resolution and the status of HTTP(S) services for each host. Notably, the HTTPS service (port 443) is not available. This means that if a user types `bank.pt` into their browser’s address bar, the browser will likely attempt to connect over HTTPS first — and then, depending on the browser and its configuration, will automatically fall back to plain HTTP (with or without a warning about lack of TLS).
 
 
-<img src="/assets/img/posts/2025/10/383f2e74fb3410696afa1792b30646a647a52795d707de5d07ac3d6781e0ec7b.png" />
+<img alt="" src="/assets/img/posts/2025/10/383f2e74fb3410696afa1792b30646a647a52795d707de5d07ac3d6781e0ec7b.png" />
 
 
 This fallback behavior introduces a security vulnerability. It creates a window where an attacker — particularly one positioned on the network (e.g., public Wi-Fi, compromised router, or ISP-level adversary) — can intercept or manipulate traffic during the fallback to HTTP.
@@ -98,7 +98,7 @@ This fallback behavior introduces a security vulnerability. It creates a window 
 Even if the site implements security headers like HTTP Strict Transport Security (HSTS), they only take effect after a secure HTTPS connection has been established at least once. If `bank.pt` has no HTTPS endpoint, HSTS cannot be applied — leaving users vulnerable to `Man-in-the-Middle (MitM) attacks`.
 
 
-<img src="/assets/img/posts/2025/10/f9470dcee5414955971a395cc14a6faa273370e65f3b37021cd7962681c30ef2.png" />
+<img alt="" src="/assets/img/posts/2025/10/f9470dcee5414955971a395cc14a6faa273370e65f3b37021cd7962681c30ef2.png" />
 <div style="text-align: center;"> Port 443 unreachable on bank.pt from multiple geographies, as tested via <a href="https://check-host.net">check-host.net</a>. </div>
 
 
@@ -134,7 +134,7 @@ Begin by opening a web browser and typing `bank.pt` into the navigation bar, the
 Even though modern browsers implement protections like **HSTS**, these cannot be applied if the HTTPS connection **fails outright**. Without a valid TLS handshake, the browser never receives the HSTS header, leaving the user completely exposed.
 
 
-<img src="/assets/img/posts/2025/10/0208158bd8e36fbb0ee19d8f933aed75721add4753cf8abb88df8044d9efdcc8.png" />
+<img alt="" src="/assets/img/posts/2025/10/0208158bd8e36fbb0ee19d8f933aed75721add4753cf8abb88df8044d9efdcc8.png" />
 
 
 Once the browser connects and sends an HTTP request to `bank.pt:80`, the server responds with a `301 Moved Permanently` HTTP status code, along with a `Location: https://www.bank.pt` response header. This header instructs the browser to redirect the user to a new URL — now using the `www` subdomain and the secure HTTPS protocol.
@@ -189,7 +189,7 @@ Once the victim attempts to access `http://bank.pt`, their browser connects over
 This setup is illustrated in the diagram below:
 
 
-<img src="/assets/img/posts/2025/10/358b700d5599032ef0dc2c493326ea15385478e72f2e13bad265dac1a69bc87e.png" />
+<img alt="" src="/assets/img/posts/2025/10/358b700d5599032ef0dc2c493326ea15385478e72f2e13bad265dac1a69bc87e.png" />
  
 This scenario creates a realistic attack surface that could easily be exploited in the wild especially in untrusted networks like airports, cafes, or hotels.
 
@@ -214,7 +214,7 @@ net.show
 
 This allows to discover connected devices and identify the target (victim). 
 
-<img src="/assets/img/posts/2025/10/1b1a87e7c9d37c26fa08a8c4f7422d701bbd109a6a5a157e9c870584a4f74bcc.png" />
+<img alt="" src="/assets/img/posts/2025/10/1b1a87e7c9d37c26fa08a8c4f7422d701bbd109a6a5a157e9c870584a4f74bcc.png" />
 
 
 
@@ -241,7 +241,7 @@ With the proxy active, we can inject arbitrary JavaScript into the victim's brow
 
 This setup demonstrates how easily insecure HTTP communication can be compromised on an open network, highlighting the critical importance of HTTPS and HSTS protections.
 
-<img src="/assets/img/posts/2025/10/e25b2a672ba30c3726658c32cbf47d1479c79713e87d40e31cba37e18753c604.png" />
+<img alt="" src="/assets/img/posts/2025/10/e25b2a672ba30c3726658c32cbf47d1479c79713e87d40e31cba37e18753c604.png" />
 
 
 
@@ -260,11 +260,11 @@ Example injection:
 ```
 
 
-<img src="/assets/img/posts/2025/10/35928a56dda1352b524fc951e3e23741593ce8f41a20eb5d0c4c7c3b8545a8e7.png" />
+<img alt="" src="/assets/img/posts/2025/10/35928a56dda1352b524fc951e3e23741593ce8f41a20eb5d0c4c7c3b8545a8e7.png" />
 
 The injected payload is automatically added to HTTP pages accessed by the victim. Since no TLS encryption is present, the victim has no way of detecting that the content has been altered.
 
-<img src="/assets/img/posts/2025/10/b74237468972cf0e58ca096d26e3d7ede89ddeeefb1fcc4db68dae1ab092cb59.png" />
+<img alt="" src="/assets/img/posts/2025/10/b74237468972cf0e58ca096d26e3d7ede89ddeeefb1fcc4db68dae1ab092cb59.png" />
 
 
 
@@ -282,7 +282,7 @@ In this scenario, we're targeting a homebanking platform. To improve reliability
 
 The script is injected in HTTP communications of our victim. Before the redirect to the secure website, the attacker can inject the script above to force the browser navigate to an arbitrary website that will be used to capture (phish) victims passwords.
 
-<img src="/assets/img/posts/2025/10/510afbb8bc8335ab054423d9f9dd38e8c25416f581d1223e66b9ba19462412eb.png" />
+<img alt="" src="/assets/img/posts/2025/10/510afbb8bc8335ab054423d9f9dd38e8c25416f581d1223e66b9ba19462412eb.png" />
 
 This redirection is done seamlessly. The phishing page mimics the original bank login page with high fidelity, capturing:
 
@@ -293,7 +293,7 @@ This redirection is done seamlessly. The phishing page mimics the original bank 
 The injected JS is scoped and timed carefully. Once the user enters their credentials into the fake login form, the data is captured and exfiltrated to the attacker's backend.
 
 
-<img src="/assets/img/posts/2025/10/6ed99cd5c20198b4f20f6dfe987cedee876e8dfe9ce3a00fa74c7cb37080374d.png" />
+<img alt="" src="/assets/img/posts/2025/10/6ed99cd5c20198b4f20f6dfe987cedee876e8dfe9ce3a00fa74c7cb37080374d.png" />
 
 
 To conclude the PoC, this method demonstrates how real-time credential harvesting combined with session hijacking can fully bypass MFA, giving the attacker immediate and persistent access to the victims banking session.
@@ -398,7 +398,7 @@ If you're responsible for managing public-facing web services, here are essentia
   * [https://hstspreload.org/](https://hstspreload.org/)
 
 * Note from Mozilla Developer Docs (MDN) about HTTP Strict Transport Security redirects:
-<img src="/assets/img/posts/2025/10/a7d47e32e39d801835c97a33cda3d8600fba6fd062c9846db3e6fe3b6b5fc534.png" />
+<img alt="" src="/assets/img/posts/2025/10/a7d47e32e39d801835c97a33cda3d8600fba6fd062c9846db3e6fe3b6b5fc534.png" />
 
 
 #### Secure Infrastructure

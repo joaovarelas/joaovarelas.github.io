@@ -22,7 +22,7 @@ image: /assets/img/posts/2025/04/2bee007c2a61db5114247dd60d0d7bb86944183fc8f8273
 
 
 
-  <img src="/assets/img/posts/2025/04/2bee007c2a61db5114247dd60d0d7bb86944183fc8f827385468b848a1f35a88.jpeg" width="550px" height="450px" /> -->
+  <img alt="" src="/assets/img/posts/2025/04/2bee007c2a61db5114247dd60d0d7bb86944183fc8f827385468b848a1f35a88.jpeg" width="550px" height="450px" /> -->
 
 
 # Introduction
@@ -212,7 +212,7 @@ Another important aspect to note about `HISTORIAN` server was the number of netw
 
 Network configuration was fetched using commands like `ipconfig`, `netstat` and Microsoft Sysinternals [tcpview64.exe](https://learn.microsoft.com/en-us/sysinternals/) utilities to identify established connections with a server running SCADA software.
 
-<img src="/assets/img/posts/2025/04/095290ada74d2b2483480eb4e955384d3d202819d125a0b7f48d0c4157f4a905.png" />
+<img alt="" src="/assets/img/posts/2025/04/095290ada74d2b2483480eb4e955384d3d202819d125a0b7f48d0c4157f4a905.png" />
 
 <p style="text-align:center;">Picture adapted from <i>NIST SP 800-82: Guide to Operational Technology (OT) Security</i> <a href="#references">[6]</a>.</p>
 
@@ -242,7 +242,7 @@ Once the service started, our desktop would connect to victim RDP session.
 
 The naïve way is to open `taskmgr.exe`, right-click *disconnected* user session and click **Connect** but system requires target user password in order to successfully switch RDP console.
 
-<img src="/assets/img/posts/2025/04/2f41b665eca3201ea13db30d967da07ce938a54661168b407d4bdd2898d5ec66.png" width="550px" height="500px" />
+<img alt="" src="/assets/img/posts/2025/04/2f41b665eca3201ea13db30d967da07ce938a54661168b407d4bdd2898d5ec66.png" width="550px" height="500px" />
 
 We avoided at all costs interfering with that system in production so `tscon` RDP hijack method was not tested this time. To access SCADA viewer running inside another user context, we needed `remote.operator` user password and started looking for it.
 
@@ -263,7 +263,7 @@ $ donpapi collect -t 10.1.1.10 -d '.' -u supplier01 -p Password.123
 
 After we escalated domain privileges, moved into historian server, pivoted to a restricted network, captured an operator account password and hijacked the RDP session to access the desktop. However, we were presented with nothing but a lousy `ACCESS DENIED` message.
 
-<img src="/assets/img/posts/2025/04/3dea08d942fdff0059857a1aaf436750c053d18e68955fb1563403756280a6a7.png" width="600px" height="600px" />
+<img alt="" src="/assets/img/posts/2025/04/3dea08d942fdff0059857a1aaf436750c053d18e68955fb1563403756280a6a7.png" width="600px" height="600px" />
 
 
 
@@ -293,7 +293,7 @@ An installer was found at [ICP DAS website](https://www.icpdas.com/products/Soft
 After installing InduSoft Web Studio it ran in `Evaluation Mode`. It allows users to trial the software during 40 hours.
 
 
-<img src="/assets/img/posts/2025/04/e4734de38f1e709d0f959a08db1ae64db2a4de56a8ca9d91a8bb2e51115ce93e.png" />
+<img alt="" src="/assets/img/posts/2025/04/e4734de38f1e709d0f959a08db1ae64db2a4de56a8ca9d91a8bb2e51115ce93e.png" />
 
 
 We did not have a license and obviously could not afford one specifically for testing its security. After all, the goal of this engagement was to uncover security holes in the critical sector organization's systems. The hypothesis we had to consider:
@@ -315,16 +315,16 @@ The most important modules of InduSoft Web Studio were:
 
 This was the decompiled code view after patching clock at `UniSoft.dll` module to ensure we have enough time to perform our security testing. We observe that clock displayed on graphical interface is asynchronous to evaluation mode clock and updates every 10 to 15 seconds. After patching, it will freeze and likely never reach 00:00.
 
-<img src="/assets/img/posts/2025/04/608fa20e3105db511eb7298a23ff008321d4c05901057494ea6c3442e6e3a7fc.png" />
+<img alt="" src="/assets/img/posts/2025/04/608fa20e3105db511eb7298a23ff008321d4c05901057494ea6c3442e6e3a7fc.png" />
 
 
-<img src="/assets/img/posts/2025/04/161c1247b39883841a028a0084af6d6bdf1506a2da886ea318e78743321bf7a4.png" />
+<img alt="" src="/assets/img/posts/2025/04/161c1247b39883841a028a0084af6d6bdf1506a2da886ea318e78743321bf7a4.png" />
 
 
 
 Licensing by activating a site key won't be covered here for obvious reasons but we found online some hints about how the key generation might work. I will leave here a document found on [Scribd](https://www.scribd.com/document/470894352/Installation-pdf) and reference to users posts talking about Site Codes & Activation Keys at [PLCForum](https://plcforum.uz.ua/viewtopic.php?t=28975&sid=8e6993469780a14c8c9f4f38d1e1b6e3&start=50):
 
-<img src="/assets/img/posts/2025/04/ada63df4f6499514c49b45dc03c538d51a06c82e76d9d571a79d5d0f9a1b2d62.png" />
+<img alt="" src="/assets/img/posts/2025/04/ada63df4f6499514c49b45dc03c538d51a06c82e76d9d571a79d5d0f9a1b2d62.png" />
 
 
 
@@ -337,7 +337,7 @@ InduSoft Web Studio implements a multi-layered security architecture that contro
 The system manages users and groups with configurable access levels, supporting local authentication, distributed security across projects, or Active Directory domain integration [[9]](#references). 
 
 
-<img src="/assets/img/posts/2025/04/5622a508307ce904978075dd0ee4eb6c44b6f550a5a8e66431e879b9e5820ed6.png" />
+<img alt="" src="/assets/img/posts/2025/04/5622a508307ce904978075dd0ee4eb6c44b6f550a5a8e66431e879b9e5820ed6.png" />
 
 
 All security settings are stored in encrypted database files with passwords hashed and salted to protect credentials. This framework provides granular control over who can access specific application features, screens, and controls throughout the SCADA system. Database encryption is proprietary but it is possible to recover the keys and restore the contents.
@@ -345,7 +345,7 @@ All security settings are stored in encrypted database files with passwords hash
 Remember that it was a production server in runtime. We couldn't stop or restart services and the InduSoft project security denied modifications of database during runtime so making it difficult to modify or add new SCADA users.  
 
 
-<img src="/assets/img/posts/2025/04/624dd96332e8fab14ab7fffe4c35bf542bc91bbde6359a979afe3e323dc4679d.png" />
+<img alt="" src="/assets/img/posts/2025/04/624dd96332e8fab14ab7fffe4c35bf542bc91bbde6359a979afe3e323dc4679d.png" />
 
 
 
@@ -354,12 +354,12 @@ Remember that it was a production server in runtime. We couldn't stop or restart
 
 During our red team engagement we were able to dump database sections from the system process without having to reverse engineer proprietary DB protection. We used [Process Hacker 2](https://sourceforge.net/projects/processhacker/files/processhacker2/) to scan memory for strings (usernames) and we found a config section with unencrypted database contents with several security groups, usernames and their hashes.
 
-<img src="/assets/img/posts/2025/04/f7819e5cd6e5de5b54ee09dc579dfbcb483101e39c6a3c9544c30a5cd23ef4b1.png" />
+<img alt="" src="/assets/img/posts/2025/04/f7819e5cd6e5de5b54ee09dc579dfbcb483101e39c6a3c9544c30a5cd23ef4b1.png" />
 
 
 After *beautifying* JSON parsed from memdump:
 
-<img src="/assets/img/posts/2025/04/f643bccb07e75895cb742a372ce08994c841f8dcd5506c9c905bb0d438d803a1.png" />
+<img alt="" src="/assets/img/posts/2025/04/f643bccb07e75895cb742a372ce08994c841f8dcd5506c9c905bb0d438d803a1.png" />
 
 
 We had to understand what was the type of hash and if it was a custom implementation or had additional protections such as **salting**. Note the *case sensitivity* of password field.
@@ -369,7 +369,7 @@ When debugging InduSoft with IDA Pro we placed some breakpoints at login functio
 - tl;dr the password storage and authentication scheme is `MD5(UTF16LE(salt+lowercase(password)))`
 
 
-<img src="/assets/img/posts/2025/04/453bb1397410306e3598c75f87792730b3a2e2373349672a63e07fbb1b679d1f.png" />
+<img alt="" src="/assets/img/posts/2025/04/453bb1397410306e3598c75f87792730b3a2e2373349672a63e07fbb1b679d1f.png" />
 
 
 
@@ -389,7 +389,7 @@ hashcat -m 70 -a 0 hashes.txt ~/tools/wordlists/password-wordlist.txt
 After several hours of reverse engineering the software in our offline lab and cracking password hashes, we finally authenticated in `SCADA` as a privileged user with development & runtime access.  
 
 
-<img src="/assets/img/posts/2025/04/f4e214d3687b0cf7104c21ab59761872466433152b06b3ae2331a743a50c348b.jpeg" />
+<img alt="" src="/assets/img/posts/2025/04/f4e214d3687b0cf7104c21ab59761872466433152b06b3ae2331a743a50c348b.jpeg" />
 
 
 
@@ -454,7 +454,7 @@ Furthermore, the findings emphasize the importance of monitoring systems that cr
 
 
 
-<a id="references"></a>
+<a href="#" id="references"></a>
 
 # References
 
@@ -470,12 +470,12 @@ Furthermore, the findings emphasize the importance of monitoring systems that cr
 
 - [6] National Institute of Standards and Technology, "Guide to Operational Technology (OT) Security," NIST Special Publication 800-82 Revision 3, September 2023. Available: [https://csrc.nist.gov/pubs/sp/800/82/r3/final](https://csrc.nist.gov/pubs/sp/800/82/r3/final)
 
-- [7] Helpmax, "Configuring the Thin Client", Web Studio Help. Available: [http://webstudio.helpmax.net/en/thin-clients-and-mobile-access/web/configuring-the-thin-client/](http://webstudio.helpmax.net/en/thin-clients-and-mobile-access/web/configuring-the-thin-client/)
+- [7] Helpmax, "Configuring the Thin Client", Web Studio Help. Available: [https://webstudio.helpmax.net/en/thin-clients-and-mobile-access/web/configuring-the-thin-client/](https://webstudio.helpmax.net/en/thin-clients-and-mobile-access/web/configuring-the-thin-client/)
 
 - [8] Alexander Korznikov. A bit of security, "Passwordless RDP Session Hijacking Feature All Windows versions", March 2017. Available: [https://www.korznikov.com/2017/03/0-day-or-feature-privilege-escalation.html](https://www.korznikov.com/2017/03/0-day-or-feature-privilege-escalation.html)
 
 
-- [9] Helpmax, "Project Security", Web Studio Help. Available: [http://webstudio.helpmax.net/en/project-security/](http://webstudio.helpmax.net/en/project-security/)
+- [9] Helpmax, "Project Security", Web Studio Help. Available: [https://webstudio.helpmax.net/en/project-security/](https://webstudio.helpmax.net/en/project-security/)
 
 
 - [10] Hashcat, "Example Hash Modes", Hashcat Wiki. Available: [https://hashcat.net/wiki/doku.php?id=example_hashes](https://hashcat.net/wiki/doku.php?id=example_hashes)  
