@@ -1,6 +1,7 @@
 ---
 title: TITLE
 date: YYYY-MM-DD
+author: vrls
 #categories: [TOP_CATEGORIE, SUB_CATEGORIE]
 tags: [TAG]
 image: /assets/img/posts/YYYY/MM/MD5SUMHASH.png #og:image
@@ -12,14 +13,28 @@ image: /assets/img/posts/YYYY/MM/MD5SUMHASH.png #og:image
 ---
 
 
+<!--
 <meta name="twitter:card" content="summary_large_image">
 <meta property="twitter:domain" content="vrls.ws">
 <meta property="twitter:url" content="https://vrls.ws/posts/2025/06/XXXXXXXXXXXXXX/">
 <meta name="twitter:title" content="TITLE OF THE POST">
 <meta name="twitter:description" content="Personal blog about computer hacking & security">
-<meta name="twitter:image" content="https://vrls.ws/assets/img/posts/2025/06/MAIN_IMAGE_THUMBNAIL_OF_THE_POST.png">
+<meta name="twitter:image" content="https://vrls.ws/assets/img/posts/2025/06/MAIN_IMAGE_THUMBNAIL_OF_THE_POST.png"> 
+
+<img src="/assets/img/posts/2025/06/MAIN_IMAGE_THUMBNAIL_OF_THE_POST.png" width="550px" height="450px" /> -->
 
 
 
-<img src="/assets/img/posts/2025/06/MAIN_IMAGE_THUMBNAIL_OF_THE_POST.png" width="550px" height="450px" />
+## Introduction
 
+## Related Work
+
+## Methodology
+
+## Experiments
+
+## Discussion
+
+## Conclusion and Future Work
+
+## References
