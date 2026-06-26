@@ -5,6 +5,7 @@ author: vrls
 #categories: [TOP_CATEGORIE, SUB_CATEGORIE]
 tags: [security, redteam, blueteam, c2, command-and-control, gitlab, cicd, pipeline, runner, devops, powershell, windows, edr, evasion, detection, lolbin, persistence, backdoor, malware, mitre, research]
 image: /assets/img/posts/2026/06/53dac03fe88f3e5b877a57ba6424c8695b1aad5be0322ac3c3eb09d3d8e0cc5c.png #og:image
+description: Explore how GitLab self-hosted runners can be repurposed as a fully functional Command and Control framework using a legitimate, digitally signed binary. Covers the GitRunner C2 proof-of-concept, execution model via CI pipelines, file transfer through GitLab Artifacts, and a detailed detection walkthrough with real Wazuh and Sysmon events, MITRE ATT&CK mapping, and high-fidelity detection rules.
 #image:
 #  src: /assets/img/posts/YYYY/MM/MD5SUMHASH.png
 #  width: 350   # in pixels
