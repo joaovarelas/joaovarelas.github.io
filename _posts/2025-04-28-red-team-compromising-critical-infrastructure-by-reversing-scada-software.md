@@ -35,7 +35,7 @@ A patch was released for AVEVA Edge (formerly InduSoft Web Studio), a HMI/SCADA 
 
 - [https://www.aveva.com/content/dam/aveva/documents/support/cyber-security-updates/SecurityBulletin_AVEVA-2025-006.pdf](https://www.aveva.com/content/dam/aveva/documents/support/cyber-security-updates/SecurityBulletin_AVEVA-2025-006.pdf)
 
-- [https://www.cisa.gov/news-events/ics-advisories/icsa-25-317-03](www.cisa.gov/news-events/ics-advisories/icsa-25-317-03)
+- [https://www.cisa.gov/news-events/ics-advisories/icsa-25-317-03](https://www.cisa.gov/news-events/ics-advisories/icsa-25-317-03)
 
 - [https://www.cve.org/CVERecord?id=CVE-2025-9317](https://www.cve.org/CVERecord?id=CVE-2025-9317)
 
