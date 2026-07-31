@@ -28,6 +28,18 @@ description: Discover how a red team compromises critical infrastructure by reve
   <img alt="" src="/assets/img/posts/2025/04/2bee007c2a61db5114247dd60d0d7bb86944183fc8f827385468b848a1f35a88.jpeg" width="550px" height="450px" /> -->
 
 
+
+# UPDATE - Security Patch and CISA ICS Advisory (11/11/2025)
+
+A patch was released for AVEVA Edge (formerly InduSoft Web Studio), a HMI/SCADA software to fix a vulnerability presented in this article **CVE-2025-9317**, followed by a CISA advisory **ICSA-25-317-03**:
+
+- [https://www.aveva.com/content/dam/aveva/documents/support/cyber-security-updates/SecurityBulletin_AVEVA-2025-006.pdf](https://www.aveva.com/content/dam/aveva/documents/support/cyber-security-updates/SecurityBulletin_AVEVA-2025-006.pdf)
+
+- [www.cisa.gov/news-events/ics-advisories/icsa-25-317-03](www.cisa.gov/news-events/ics-advisories/icsa-25-317-03)
+
+- [https://www.cve.org/CVERecord?id=CVE-2025-9317](https://www.cve.org/CVERecord?id=CVE-2025-9317)
+
+
 # Introduction
 
 Critical sectors such as energy, water, health, banking, MSP's and others are under high scrutiny in terms of security. The NIS2 Directive is pushing European organizations leadership to take a more proactive approach towards cybersecurity to avoid potential incidents.

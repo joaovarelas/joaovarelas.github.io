@@ -29,6 +29,15 @@ description: Uncover a critical misconfiguration in homebanking enabling MitM ph
 
 
 
+## UPDATE - Homebanking Vulnerability Resolution (31/07/2026) 
+
+The banking website new has HTTPS available with a valid certificate. I don't know when this was fixed since I never got feedback about the issue I reported in 2023.
+
+<img alt="" src="/assets/img/posts/2025/10/e0b2bb3033f8008a78c3eb79c2f0d5e7dc927bf5e49361d12cec709a49049176.png" />
+
+
+
+
 
 ## Introduction 
 
