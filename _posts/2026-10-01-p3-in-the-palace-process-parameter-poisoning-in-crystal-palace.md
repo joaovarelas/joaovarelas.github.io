@@ -197,7 +197,7 @@ One shadow space block is allocated once before `VirtualAlloc` and reused for th
 
 The project follows a standard Crystal Palace layout:
 
-```makefile
+```
 .
 ├── Makefile
 ├── loader.spec
@@ -213,7 +213,7 @@ The project follows a standard Crystal Palace layout:
 
 The Makefile compiles each source file to a separate `.o`, then hands everything to the Crystal Palace linker (`cpl`). The shellcode is read from disk, hex-encoded, and passed as a variable `$SC` at link time:
 
-```makefile
+```
 SC_HEX_DATA := $(shell xxd -p $(SCFILE) | tr -d '\n')
 
 link.x64:
