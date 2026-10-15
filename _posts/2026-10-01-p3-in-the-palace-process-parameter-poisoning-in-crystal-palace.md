@@ -18,6 +18,7 @@ description: A technical walkthrough of porting Process Parameter Poisoning (P³
 
 ## 1. Introduction
 
+> **Part 2 — Hardening the Loader** is available at [https://vrls.ws/posts/p3-in-the-palace-hardening-the-loader-part-2/](https://vrls.ws/posts/p3-in-the-palace-hardening-the-loader-part-2/).
 
 Process injection techniques live and die by the APIs they touch. The classic sequence of `VirtualAllocEx`, `WriteProcessMemory`, and `CreateRemoteThread` is so well-known that most EDRs flag it on sight. 
 [Process Parameter Poisoning (P³)](https://github.com/Orange-Cyberdefense/p3-loader/blob/main/Whitepaper-P3.pdf), published by Max Hirschberger and Ogulcan Ugur in July 2026, sidesteps this entirely by leveraging `CreateProcessW` as the write primitive, smuggling shellcode into a child process through fields that Windows copies automatically into the new process's `RTL_USER_PROCESS_PARAMETERS` structure without any explicit allocation, write, or remote thread.
